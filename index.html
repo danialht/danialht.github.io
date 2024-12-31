@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danial Hosseintabar</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <button id="theme-toggle">Toggle Theme</button>
+
+    <header>
+        <div class="container">
+            <h1>Danial Hosseintabar</h1>
+            <p>Computer Science Student at MIT</p>
+        </div>
+    </header>
+
+    <nav>
+        <ul class="navigation">
+            <li><a href="#about">About</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#coursework">Coursework</a></li>
+            <li><a href="#readinglist">Reading list</a></li>
+            <!-- <li><a href="#publications">Publications</a></li> -->
+            <li><a href="#contact">Contact</a></li>
+            <!-- <li><a href="#experiences">Experiences</a></li> -->
+        </ul>
+    </nav>
+
+    <main>
+        <section id="about">
+            <div class="container">
+                <h2>About Me</h2>
+                <p>Hello! I am Danial Hosseintabar, a Student at MIT majoring Computer Science.</p>
+            </div>
+        </section>
+
+        <section id="projects">
+            <div class="container">
+                <h2>Projects</h2>
+                <p>My work explores [specific area or problem]. Current projects include:</p>
+                <ul>
+                    <li><strong>3D_Graphics</strong>: [Short description]</li>
+                    <li><strong>Strategic Game</strong>: [Short description]</li>
+                    <li><strong>Invisible Piano</strong>: [Short description]</li>
+                    <li><strong>Chess AI</strong>: [Short description]</li>
+                    <li><strong>Danialgorithms</strong>: [Short description]</li>
+                    <!-- <li><strong>Lisp Editor</strong>: [Short description]</li> -->
+                    <li><strong>Text Editor</strong>: [Short description]</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="coursework">
+            <div class="container">
+                <h2>Coursework</h2>
+                <li><strong>Course Name</strong>: [Short description]</li>
+            </div>
+        </section>
+
+        <section id="Reading list">
+            <div class="container">
+                <h2>Reading list</h2>
+                <li><strong>Name</strong>: [Short description]</li>
+            </div>
+        </section>
+
+        <!-- <section id="publications">
+            <div class="container">
+                <h2>Publications</h2>
+                <ul>
+                    <li><strong>[Title of Paper]</strong>, [Authors], [Journal/Conference], [Year]. <a href="[Link to Paper]">Read more</a></li>
+                    <li><strong>[Title of Paper]</strong>, [Authors], [Journal/Conference], [Year]. <a href="[Link to Paper]">Read more</a></li>
+                </ul>
+            </div>
+        </section> -->
+
+        <!-- <section id="experiences">
+            <div class="container">
+                <h2>Experiences</h2>
+                <ul>
+                    <li><strong>[Experience Name]</strong>, [Authors], [Journal/Conference], [Year]. <a href="[Link to Paper]">Read more</a></li>
+                    <li><strong></strong>, [Authors], [Journal/Conference], [Year]. <a href="[Link to Paper]">Read more</a></li>
+                </ul>
+            </div>
+        </section> -->
+
+        <section id="contact">
+            <div class="container">
+                <h2>Contact</h2>
+                <p>If you would like to get in touch, please send me message in <a href="https://linkedin.com/in/danial-hosseintabar" target="_blank">LinkedIn</a>.</a>.</p>
+                <!-- <p>You can also find me on <a href="https://linkedin.com/in/yourprofile" target="_blank">LinkedIn</a> and <a href="https://twitter.com/" target="_blank">Twitter</a>.</p> -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p id = "copyright">&copy; [Year] Danial Hosseintabar. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById("copyright").innerHTML = "&copy; " + (new Date()).getFullYear() + " Danial Hosseintabar. All rights reserved."
+        const toggleButton = document.getElementById('theme-toggle');
+        toggleButton.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+        });
+    </script>
+</body>
+</html>
