@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danial Hosseintabar</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="../js/set_constants_all.js" defer></script>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1 class="glitchText" id="nameAndFamilyName"></h1>
+            <p id="affiliation"></p>
+        </div>
+    </header>
+
+    <nav>
+        <ul class="navigation">
+            <li><a href="#about">About</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#coursework">Coursework</a></li>
+            <li><a href="#readinglist">Reading list</a></li>
+            <li><a href="#publications">Publications</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#experiences">Experiences</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="Reading list">
+            <div class="container">
+                <h2>Reading list</h2>
+                <li><strong>Linear Algebra Done Right</strong> by <strong>Sheldon Axler</strong></li>
+                <li><strong>Convex Optimization</strong> by <strong>Stephan Boyd and Lieven Vandenberghe</strong></li>
+                <li><strong>Introduction to Electrodynamics</strong> by <strong>David J. Griffiths</strong></li>
+            </div>
+        </section>
+
+        <section id="publications">
+            <div class="container">
+                <h2>Publications</h2>
+                <ul>
+                    <li><strong>[Title of Paper]</strong>, [Authors], [Journal/Conference], [Year]. <a href="[Link to Paper]">Read more</a></li>
+                    <li><strong>[Title of Paper]</strong>, [Authors], [Journal/Conference], [Year]. <a href="[Link to Paper]">Read more</a></li>
+                </ul>
+            </div>
+        </section>
+
+        
+
+    </main>
+
+
+
+    <footer>
+        <div class="container">
+            <p id = "copyright">&copy; [Year] Danial Hosseintabar. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById("copyright").innerHTML = "&copy; " + (new Date()).getFullYear() + " Danial Hosseintabar. All rights reserved."
+        // const toggleButton = document.getElementById('theme-toggle');
+        // toggleButton.addEventListener('click', () => {
+        //     document.body.classList.toggle('dark-theme');
+        // });
+    </script>
+</body>
+</html>

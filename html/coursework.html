@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danial Hosseintabar</title>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="../js/set_constants_all.js" defer></script>
+    <script src="../js/set_constants_coursework.js" defer></script>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1 class="glitchText" id="nameAndFamilyName"></h1>
+            <p id="affiliation"></p>
+        </div>
+    </header>
+
+    <nav>
+        <ul class="navigation">
+            <li><a href="#about">About</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#coursework">Coursework</a></li>
+            <li><a href="#readinglist">Reading list</a></li>
+            <li><a href="#publications">Publications</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#experiences">Experiences</a></li>
+        </ul>
+    </nav>
+
+    <main>
+
+        <section id="coursework" onload="console.log(3);fill_in_descriptions();">
+            <div class="container">
+                <h2>Coursework</h2>
+
+                <div id="courseworkCardOptimization" class="card">
+                    <div class="left-half">
+                      <img src="../assets/images/optimization.jpg" alt="Sample Image">
+                    </div>
+                    <div class="right-half">
+                        <div style="font-weight: bold;">Optimization</div>
+                    </div>
+                  </div>
+
+                <div id="courseworkCardDiscreteProbability" class="card">
+                    <div class="left-half">
+                      <img src="../assets/images/erdos_reyni_graph.png" alt="Sample Image">
+                    </div>
+                    <div class="right-half">
+                        <div style="font-weight: bold;">Discrete Probability and Stochastic Processes</div>
+                    </div>
+                  </div>
+
+                  <div id="courseworkCardTensorDecompositions" class="card">
+                    <div class="left-half">
+                      <img src="../assets/images/tensor_decomposition.ppm" alt="Sample Image">
+                    </div>
+                    <div class="right-half">
+                        <div style="font-weight: bold;">Tensor Decompositions</div>
+                    </div>
+                  </div>
+
+                </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p id = "copyright">&copy; [Year] Danial Hosseintabar. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById("copyright").innerHTML = "&copy; " + (new Date()).getFullYear() + " Danial Hosseintabar. All rights reserved."
+        // const toggleButton = document.getElementById('theme-toggle');
+        // toggleButton.addEventListener('click', () => {
+        //     document.body.classList.toggle('dark-theme');
+        // });
+    </script>
+</body>
+</html>

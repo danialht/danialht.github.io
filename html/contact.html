@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danial Hosseintabar</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="scripts/set_constants_all.js" defer></script>
+    <link rel="stylesheet" href="../styles.css">
+    <script src="../js/set_constants_all.js" defer></script>
 </head>
 <body>
-    <button id="theme-toggle">Toggle Theme</button>
 
     <header>
         <div class="container">
-            <h1 id="nameAndFamilyName" class="glitchText"></h1>
+            <h1 class="glitchText" id="nameAndFamilyName"></h1>
             <p id="affiliation"></p>
         </div>
     </header>
@@ -30,15 +29,13 @@
     </nav>
 
     <main>
-        <section id="about">
+        <section id="contact">
             <div class="container">
-                <h2>About Me</h2>
-                <p>Hello! I am Danial Hosseintabar, a Student at MIT majoring Computer Science.</p>
+                <h2>Contact</h2>
+                <p>If you would like to get in touch, please send me message in <a href="https://linkedin.com/in/danial-hosseintabar" target="_blank">LinkedIn</a>.</a>.</p>
+                <!-- <p>You can also find me on <a href="https://linkedin.com/in/yourprofile" target="_blank">LinkedIn</a> and <a href="https://twitter.com/" target="_blank">Twitter</a>.</p> -->
             </div>
         </section>
-
-        </section>
-
     </main>
 
     <footer>
@@ -49,10 +46,10 @@
 
     <script>
         document.getElementById("copyright").innerHTML = "&copy; " + (new Date()).getFullYear() + " Danial Hosseintabar. All rights reserved."
-        const toggleButton = document.getElementById('theme-toggle');
-        toggleButton.addEventListener('click', () => {
-            document.body.classList.toggle('dark-theme');
-        });
+        // const toggleButton = document.getElementById('theme-toggle');
+        // toggleButton.addEventListener('click', () => {
+        //     document.body.classList.toggle('dark-theme');
+        // });
     </script>
 </body>
 </html>
