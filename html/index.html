@@ -6,13 +6,21 @@
     <title>Danial Hosseintabar</title>
     <link rel="stylesheet" href="../styles.css">
     <script src="../js/set_constants_all.js" defer></script>
-    <script src="../js/set_constants_reading_list.js" type="module" defer></script>
+    <script src="../js/denoiser.js" defer></script>
+    <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" defer></script>
 </head>
 <body>
+    <!-- <button id="theme-toggle">Toggle Theme</button> -->
 
     <header>
         <div class="container">
-            <h1 class="glitchText" id="nameAndFamilyName"></h1>
+            <h1 id="nameAndFamilyName" class="glitchText"></h1>
             <p id="affiliation"></p>
         </div>
     </header>
@@ -30,45 +38,39 @@
     </nav>
 
     <main>
-        <section id="readingList">
-            <div class="container">
-                <h2>Reading list</h2>
-            </div>
-        </section>
-
-        <!-- <section id="publications">
-            <div class="container">
-                <h2>Publications</h2>
-                <ul>
-                    <li><strong>[Title of Paper]</strong>, [Authors], [Journal/Conference], [Year]. <a href="[Link to Paper]">Read more</a></li>
-                    <li><strong>[Title of Paper]</strong>, [Authors], [Journal/Conference], [Year]. <a href="[Link to Paper]">Read more</a></li>
-                </ul>
-            </div>
-        </section> -->
-
-        <!-- <section id="experiences">
-            <div class="container">
-                <h2>Experiences</h2>
-                <ul>
-                    <li><strong>[Experience Name]</strong>, [Authors], [Journal/Conference], [Year]. <a href="[Link to Paper]">Read more</a></li>
-                    <li><strong></strong>, [Authors], [Journal/Conference], [Year]. <a href="[Link to Paper]">Read more</a></li>
-                </ul>
-            </div>
-        </section> -->
-
 
 
         
+        <section id="about">
+            <div class="container">
+                <h2>About Me</h2>
+                <p>Hello! I am Danial Hosseintabar, CS & Math Student at MIT and Researcher at CSAIL.</p>
+                <p>Here is a picture of me gone through <a href="https://arxiv.org/abs/2006.11239">DDPM</a> forward pass for you to denoise.</p>
+            </div>
+        </section>
+        
+        <div style="text-align: center;">
+            $$q\left(\mathbf{x}_t \mid \mathbf{x}_{t-1}\right):=\mathcal{N}\left(\mathbf{x}_t ; \sqrt{1-\beta_t} \mathbf{x}_{t-1}, \beta_t \mathbf{I}\right)$$
+        </div>
+        
+        <canvas style = "border-radius: 100%;" id="canvas"></canvas>
+        <div id="t_value" style="text-align: center;">
+        </div>
+            <input type="range" id="noiseRange" min="1" max="100" value="100">
+        <div style="height: 150px;"></div>
+
+
 
     </main>
-
-
 
     <footer class="footer">
         <div class="container">
             <p id = "copyright">&copy; [Year] Danial Hosseintabar. All rights reserved.</p>
         </div>
     </footer>
+
+    
+
 
     <script>
         document.getElementById("copyright").innerHTML = "&copy; " + (new Date()).getFullYear() + " Danial Hosseintabar. All rights reserved."

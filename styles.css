@@ -115,6 +115,20 @@ body.dark-theme .navigation {
     margin: 0 10px;
 }
 
+.footer {
+    position: fixed; /* Positions the element relative to the viewport */
+    bottom: 0;       /* Aligns it to the bottom edge of the viewport */
+    left: 0;         /* Aligns it to the left edge of the viewport */
+    width: 100%;     /* Makes it span the full width of the viewport */
+    padding: 15px 0; /* Example: some padding */
+    text-align: center; /* Example: center the text */
+    z-index: 1000;   /* Ensures it stays on top of other content */
+    background-color: rgba(156, 199, 255, 0.7); /* Example: a semi-transparent dark background color */
+    backdrop-filter: blur(5px); /* Adds a blur effect to the content behind the footer */
+    -webkit-backdrop-filter: blur(5px); /* For Safari support */
+    max-height: 10%;
+}
+
 .navigation a {
     color: #fff;
     text-decoration: none;
@@ -207,4 +221,84 @@ body.dark-theme #theme-toggle:hover {
     border-radius: 8px;
   }
 
-  
+canvas {
+  display: block;
+  margin: 0 auto 10px auto; /* top: 0, bottom: 10px, auto left/right centers it */
+  max-width: 100%;
+}
+
+/* Make body take full space */
+body, html {
+  height: 100%;
+  margin: 0;
+}
+
+/* Center everything vertically and horizontally */
+.center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Style and center the canvas */
+canvas {
+  max-width: 100%;
+  margin-bottom: 20px;
+}
+
+/* Style and center the range input */
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 300px;
+  height: 8px;
+  border-radius: 5px;
+  background: linear-gradient(to right, #4CAF50, #8BC34A);
+  outline: none;
+  margin: 0 auto;
+  transition: background 0.3s;
+  display: block;
+}
+
+/* Firefox track */
+input[type="range"]::-moz-range-track {
+  height: 8px;
+  background: #ddd;
+  border-radius: 5px;
+}
+
+/* WebKit thumb */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border: 2px solid #4CAF50;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s, transform 0.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: #4CAF50;
+  transform: scale(1.1);
+}
+
+/* Firefox thumb */
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: white;
+  border: 2px solid #4CAF50;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s, transform 0.2s;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  background: #4CAF50;
+  transform: scale(1.1);
+}

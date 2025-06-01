@@ -3,6 +3,8 @@
  * into the HTML file for readability.
  */
 
+// TODO: the footer name, the denoiser photo link
+
 /**
  * Constants
  */
