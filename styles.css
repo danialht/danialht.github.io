@@ -120,7 +120,6 @@ body.dark-theme .navigation {
     bottom: 0;       /* Aligns it to the bottom edge of the viewport */
     left: 0;         /* Aligns it to the left edge of the viewport */
     width: 100%;     /* Makes it span the full width of the viewport */
-    padding: 15px 0; /* Example: some padding */
     text-align: center; /* Example: center the text */
     z-index: 1000;   /* Ensures it stays on top of other content */
     background-color: rgba(156, 199, 255, 0.7); /* Example: a semi-transparent dark background color */
@@ -301,4 +300,88 @@ input[type="range"]::-moz-range-thumb {
 input[type="range"]::-moz-range-thumb:hover {
   background: #4CAF50;
   transform: scale(1.1);
+}
+
+/* Course item styles */
+.course-item {
+  margin: 20px 0;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.course-item:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.course-header {
+  padding: 20px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+.course-header:hover {
+  background-color: #e9ecef;
+}
+
+.toggle-icon {
+  font-size: 16px;
+  margin-right: 15px;
+  color: #007bff;
+  transition: transform 0.3s ease;
+  width: 20px;
+  text-align: center;
+}
+
+.course-title {
+  font-weight: bold;
+  font-size: 18px;
+  color: #333;
+}
+
+.course-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.course-description {
+  padding: 20px;
+  line-height: 1.6;
+  color: #555;
+  background-color: #fff;
+}
+
+/* Dark theme support */
+body.dark-theme .course-item {
+  background-color: #2d3748;
+  border-color: #4a5568;
+}
+
+body.dark-theme .course-header {
+  background-color: #1a202c;
+}
+
+body.dark-theme .course-header:hover {
+  background-color: #2d3748;
+}
+
+body.dark-theme .course-title {
+  color: #e2e8f0;
+}
+
+body.dark-theme .course-description {
+  background-color: #2d3748;
+  color: #cbd5e0;
+}
+
+body.dark-theme .toggle-icon {
+  color: #63b3ed;
 }
