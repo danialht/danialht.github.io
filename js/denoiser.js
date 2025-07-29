@@ -1,10 +1,12 @@
+// TOOD: Optimize this
+
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const noiseSlider = document.getElementById('noiseRange');
 
 const img = new Image();
 img.crossOrigin = 'anonymous'; // in case you're using a remote image
-img.src = 'https://media.licdn.com/dms/image/v2/D4D03AQEZQGF2ZW3gTQ/profile-displayphoto-shrink_400_400/B4DZapGRrNG8Ag-/0/1746593717799?e=1754524800&v=beta&t=lk2Liv2H6-I01a54gZIyusJbnb7A4-gvDRDRpal--KA'; // Replace with your image
+img.src = 'https://media.licdn.com/dms/image/v2/D4D03AQHrVdOahFnBXg/profile-displayphoto-scale_400_400/B4DZepzzHFHMAg-/0/1750900618376?e=1756944000&v=beta&t=GUL6H4M7iRGmNaus2JUvLmu-WJY1KFamgOOTNctx1EQ';
 
 let originalImageData;
 let noiseData;
