@@ -1,7 +1,6 @@
 export class ReadingMaterial{
-    constructor(name, author, description){
+    constructor(name, author){
         this.name = name;
         this.author = author;
-        this.description = description;
     }
 }

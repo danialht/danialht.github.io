@@ -5,9 +5,11 @@ import { ReadingMaterial } from "./set_constants_utils.js";
  */
 
 const readingList = [
-    new ReadingMaterial("Linear Algebra Done Right", "Sheldon Axler", "TODO :)"),
-    new ReadingMaterial("Convex Optimization", "Stephan Boyd and Lieven Vandenberghe", "TODO :-)"),
-    new ReadingMaterial("Introduction to Electrodynamics", "David J. Griffiths", "TODO :D")
+    new ReadingMaterial("Linear Algebra Done Right", "Sheldon Axler"),
+    new ReadingMaterial("Convex Optimization", "Stephan Boyd and Lieven Vandenberghe"),
+    new ReadingMaterial("Introduction to Electrodynamics", "David J. Griffiths"),
+    new ReadingMaterial("An Introduction to Mechanics", "Daniel Kleppner, Robert J. Kolenkow"),
+    new ReadingMaterial("Introduction To Classical Mechanics With Problems And Solutions", "David Morin"),
 ];
 
 /**
