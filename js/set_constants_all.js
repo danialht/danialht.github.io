@@ -31,7 +31,7 @@ NAVIGATION_BAR_LINKS = {
 // Setting the name, family name, affiliation
 document.getElementById("nameAndFamilyName").innerHTML =
 	NAME + " " + FAMILY_NAME;
-document.getElementById("affiliation").innerHTML = AFFILIATION;
+// document.getElementById("affiliation").innerHTML = AFFILIATION; 
 
 // Setting the links for the navigation bar on top
 navigationArr = document.getElementsByClassName("navigation")[0].children;
@@ -106,3 +106,58 @@ if (GLITCH_EFFECT) {
 		setInterval(() => glitchEffect(), 3000);
 	}
 }
+
+// Vanta Trunk configuration
+const VANTA_ENABLED = true;
+const VANTA_SELECTOR = "#vanta-header";
+const VANTA_CONFIG = {
+	mouseControls: true,
+	touchControls: true,
+	gyroControls: false,
+	minHeight: 200.0,
+	minWidth: 200.0,
+	scale: 1.0,
+	scaleMobile: 1.0,
+	// backgroundColor: 0x3aa2ff,
+	backgroundColor: 0x9cc7ff,
+	spacing: 2.0,
+	chaos: 4.0,
+	color: 0x000000,
+};
+
+const VANTA_P5_URL = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js";
+const VANTA_TRUNK_URL = "https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.trunk.min.js";
+
+function loadExternalScriptOnce(src) {
+	return new Promise((resolve, reject) => {
+		if (document.querySelector(`script[src="${src}"]`)) return resolve();
+		const s = document.createElement("script");
+		s.src = src;
+		s.async = true;
+		s.onload = () => resolve();
+		s.onerror = () => reject(new Error(`Failed to load ${src}`));
+		document.head.appendChild(s);
+	});
+}
+
+// Load Vanta only on pages that have the target element
+window.addEventListener("DOMContentLoaded", async () => {
+	if (!VANTA_ENABLED) return;
+	const el = document.querySelector(VANTA_SELECTOR);
+	if (!el) return; // Do not load libraries if the element isn't present
+
+	try {
+		if (!window.p5) await loadExternalScriptOnce(VANTA_P5_URL);
+		if (!(window.VANTA && window.VANTA.TRUNK)) {
+			await loadExternalScriptOnce(VANTA_TRUNK_URL);
+		}
+		if (window.__vantaInstance && typeof window.__vantaInstance.destroy === "function") {
+			window.__vantaInstance.destroy();
+		}
+		if (window.VANTA && window.VANTA.TRUNK) {
+			window.__vantaInstance = window.VANTA.TRUNK({ el, ...VANTA_CONFIG });
+		}
+	} catch (err) {
+		console.error("Vanta initialization failed:", err);
+	}
+});

@@ -19,12 +19,13 @@
 		></script>
 	</head>
 	<body>
-		<!-- <button id="theme-toggle">Toggle Theme</button> -->
 
 		<header>
-			<div class="container">
-				<h1 id="nameAndFamilyName" class="glitchText"></h1>
-				<p id="affiliation"></p>
+			<div id="vanta-header">
+				<div class="container vanta-content">
+					<h1 id="nameAndFamilyName" class="glitchText"></h1>
+					<p id="affiliation"></p>
+				</div>
 			</div>
 		</header>
 
@@ -52,7 +53,6 @@
 			</section>
 
 			<div style="text-align: center">
-				<!-- $$q\left(\mathbf{x}_t \mid \mathbf{x}_{t-1}\right):=\mathcal{N}\left(\mathbf{x}_t ; \sqrt{1-\beta_t} \mathbf{x}_{t-1}, \beta_t \mathbf{I}\right)$$ -->
 				$$d\mathbf{x} = f(\mathbf{x}, t) dt + g(t) d\mathbf{w}$$
 				$$d\mathbf{x} = [f(\mathbf{x}, t) - g^2(t)\nabla_x \log
 				p_t(\mathbf{x})]dt + g(t) d\mathbf{\bar{w}}$$
@@ -77,10 +77,6 @@
 				"&copy; " +
 				new Date().getFullYear() +
 				" Danial Hosseintabar. All rights reserved.";
-			// const toggleButton = document.getElementById('theme-toggle');
-			// toggleButton.addEventListener('click', () => {
-			//     document.body.classList.toggle('dark-theme');
-			// });
 		</script>
 	</body>
 </html>
