@@ -5,8 +5,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Danial Hosseintabar</title>
 		<link rel="stylesheet" href="../css/styles.css" />
+		<link rel="stylesheet" href="../css/coursework.css" />
 		<script src="../js/set_constants_all.js" defer></script>
-		<script src="../js/set_constants_coursework.js" defer></script>
+		<script src="../js/coursework.js" defer></script>
 	</head>
 	<body>
 		<header>
@@ -33,10 +34,35 @@
 		<main>
 			<section id="coursework">
 				<div class="container">
-					<h2>Coursework - Not very complete yet :(</h2>
-					Here I will share with you some fun stuff I learned about
-					the courses that I have taken.
-					<!-- Course elements will be generated dynamically by JavaScript -->
+					<h1>Coursework</h1>
+					Here I want to share with you some of the fun courses I have taken and some cool things that I have learned.
+
+					<div class="course-item" id="18656">
+						<div class="course-header" onclick="toggleCourse('18656')">
+							<div class="toggle-icon">▶</div>
+							<div>
+								<div class="course-title">18.656: Mathematical Statistics: A Non-Asymptotic Approach</div>
+								<div class="course-instructors">Instructors: Martin Wainwright and Alexander Rakhlin</div>
+							</div>
+						</div>
+						<div class="course-content">
+							<div class="course-description">TODO</div>
+						</div>
+					</div>
+
+					<div class="course-item" id="18619">
+						<div class="course-header" onclick="toggleCourse('18619')">
+							<div class="toggle-icon">▶</div>
+							<div>
+								<div class="course-title">18.619: Discrete Probability and Stochastic Processes</div>
+								<div class="course-instructors">Instructor: Kuikui Liu</div>
+							</div>
+						</div>
+						<div class="course-content">
+							<div class="course-description">TODO</div>
+						</div>
+					</div>
+
 				</div>
 			</section>
 		</main>
