@@ -4,7 +4,8 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Danial Hosseintabar</title>
-		<link rel="stylesheet" href="../styles.css" />
+		<link rel="stylesheet" href="../css/styles.css" />
+		<link rel="stylesheet" href="../css/publications.css" />
 		<script src="../js/set_constants_all.js" defer></script>
 	</head>
 	<body>
@@ -32,28 +33,51 @@
 		<main>
 			<section id="publications">
 				<div class="container">
-					<h2>Publications</h2>
+					<h1>Publications</h1>
 					<div class="loading-section">
-						<h3
-							style="
-								font-size: 3em;
-								text-align: center;
-								margin-bottom: 20px;
-							"
-						>
-							TODO :)
-						</h3>
-						<img
-							src="../assets/images/todo_publication_page.png"
-							alt="Loading Image"
-							style="
-								display: block;
-								margin-bottom: 200px;
-								max-width: 100%;
-								height: auto;
-								border-radius: 10%;
-							"
-						/>
+						<div class="publications-list">
+							<div class="publication-item">
+								<h4>DiffEM: Learning from Corrupted Data with Diffusion Models via Expectation Maximization</h4>
+								<p class="authors"><strong>Danial Hosseintabar</strong>, Fan Chen, Giannis Daras, Antonio Torralba, Constantinos Daskalakis</p>
+								<div class="publication-meta">
+									<!-- <span class="venue">CVPR 2024</span> -->
+									<span class="year">2025</span>
+								</div>
+								<div class="publication-links">
+									<a href="https://arxiv.org/abs/2510.12691" class="paper-link">Paper</a>
+									<a href="https://github.com/danialht/DiffEM" class="code-link">Code</a>
+									<!-- <a href="#" class="slides-link">Slides</a> -->
+									<!-- <a href="#" class="poster-link">Poster</a> -->
+								</div>
+								<p class="publication-abstract">
+									Diffusion models have emerged as powerful generative priors for high-dimensional inverse problems, yet learning them when only corrupted or noisy observations are available remains challenging. In this work, we propose a new method for training diffusion models with Expectation-Maximization (EM) from corrupted data. Our proposed method, DiffEM, utilizes conditional diffusion models to reconstruct clean data from observations in the E-step, and then uses the reconstructed data to refine the conditional diffusion model in the M-step. Theoretically, we provide monotonic convergence guarantees for the DiffEM iteration, assuming appropriate statistical conditions. We demonstrate the effectiveness of our approach through experiments on various image reconstruction tasks.
+								</p>
+								<button class="toggle-abstract" onclick="toggleAbstract(this)">Show Abstract</button>
+							</div>
+							
+							<!-- General template for each publication item: -->
+							<!-- <div class="publication-item">
+								<h4>Machine Learning in Natural Language Processing</h4>
+								<p class="authors">Alice Johnson, <strong>Danial Hosseintabar</strong>, Bob Wilson</p>
+								<div class="publication-meta">
+									<span class="venue">ACL 2023</span>
+									<span class="year">2023</span>
+								</div>
+								<span class="award-badge">Best Paper Award</span>
+								<div class="publication-links">
+									<a href="#" class="paper-link">Paper</a>
+									<a href="#" class="code-link">Code</a>
+									<a href="#" class="video-link">Video</a>
+									<a href="#" class="slides-link">Slides</a>
+									<a href="#" class="poster-link">Poster</a>
+								</div>
+								<p class="publication-abstract">
+									We propose a novel architecture for natural language understanding that achieves state-of-the-art results across multiple benchmarks.
+								</p>
+								<button class="toggle-abstract" onclick="toggleAbstract(this)">Show Abstract</button>
+							</div> -->
+							
+						</div>
 					</div>
 					<ul>
 						<!-- <li><strong>[Title of Paper]</strong>, [Authors], [Journal/Conference], [Year]. <a href="[Link to Paper]">Read more</a></li> -->
@@ -76,6 +100,21 @@
 				"&copy; " +
 				new Date().getFullYear() +
 				" Danial Hosseintabar. All rights reserved.";
+			
+			// Toggle abstract visibility
+			function toggleAbstract(button) {
+				const publicationItem = button.closest('.publication-item');
+				const abstract = publicationItem.querySelector('.publication-abstract');
+				
+				if (abstract.classList.contains('show')) {
+					abstract.classList.remove('show');
+					button.textContent = 'Show Abstract';
+				} else {
+					abstract.classList.add('show');
+					button.textContent = 'Hide Abstract';
+				}
+			}
+			
 			// const toggleButton = document.getElementById('theme-toggle');
 			// toggleButton.addEventListener('click', () => {
 			//     document.body.classList.toggle('dark-theme');

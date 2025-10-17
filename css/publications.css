@@ -1,0 +1,364 @@
+/* Publications Section Styles */
+#publications {
+	padding: 2rem 0;
+	background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+}
+
+.publications-list {
+	margin-top: 3rem;
+}
+
+.publication-item {
+	background: white;
+	border-radius: 12px;
+	padding: 1.1rem;
+	margin-bottom: 2rem;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+	transition: all 0.3s ease;
+	border-left: 4px solid transparent;
+	position: relative;
+	overflow: hidden;
+}
+
+.publication-item::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 4px;
+	height: 100%;
+	background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+	transform: scaleY(0);
+	transition: transform 0.3s ease;
+}
+
+.publication-item:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 12px 24px rgba(102, 126, 234, 0.15);
+}
+
+.publication-item:hover::before {
+	transform: scaleY(1);
+}
+
+.publication-item h4 {
+	color: #2c3e50;
+	font-size: 1.4rem;
+	font-weight: 600;
+    margin-top: 1rem;
+	margin-bottom: 1rem;
+	line-height: 1.4;
+	transition: color 0.3s ease;
+}
+
+.publication-item:hover h4 {
+	color: #667eea;
+}
+
+.publication-item .authors {
+	color: #5a6c7d;
+	font-size: 1rem;
+	margin-bottom: 1.2rem;
+	line-height: 1.6;
+}
+
+.publication-item .authors strong {
+	color: #2c3e50;
+	font-weight: 600;
+}
+
+.publication-meta {
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+	margin-bottom: 1rem;
+	flex-wrap: wrap;
+}
+
+.venue {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: #667eea;
+	font-weight: 500;
+	font-size: 0.95rem;
+}
+
+.venue::before {
+	content: '📄';
+	font-size: 1.1rem;
+}
+
+.year {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: #764ba2;
+	font-weight: 500;
+	font-size: 0.95rem;
+}
+
+.year::before {
+	content: '📅';
+	font-size: 1.1rem;
+}
+
+.publication-links {
+	display: flex;
+	gap: 1rem;
+	margin-top: 1.5rem;
+	flex-wrap: wrap;
+}
+
+.paper-link,
+.code-link,
+.slides-link,
+.video-link,
+.poster-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.6rem 1.5rem;
+	border-radius: 25px;
+	text-decoration: none;
+	font-weight: 500;
+	font-size: 0.95rem;
+	transition: all 0.3s ease;
+	position: relative;
+	overflow: hidden;
+}
+
+.paper-link {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+	box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.paper-link:hover {
+	box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+	transform: translateY(-2px);
+}
+
+.paper-link::before {
+	content: '📄';
+	font-size: 1.1rem;
+}
+
+.code-link {
+	background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+	color: white;
+	box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+}
+
+.code-link:hover {
+	box-shadow: 0 6px 20px rgba(17, 153, 142, 0.4);
+	transform: translateY(-2px);
+}
+
+.code-link::before {
+	content: '💻';
+	font-size: 1.1rem;
+}
+
+.slides-link {
+	background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+	color: white;
+	box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3);
+}
+
+.slides-link:hover {
+	box-shadow: 0 6px 20px rgba(240, 147, 251, 0.4);
+	transform: translateY(-2px);
+}
+
+.slides-link::before {
+	content: '📊';
+	font-size: 1.1rem;
+}
+
+.video-link {
+	background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+	color: white;
+	box-shadow: 0 4px 15px rgba(250, 112, 154, 0.3);
+}
+
+.video-link:hover {
+	box-shadow: 0 6px 20px rgba(250, 112, 154, 0.4);
+	transform: translateY(-2px);
+}
+
+.video-link::before {
+	content: '🎥';
+	font-size: 1.1rem;
+}
+
+.poster-link {
+	background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+	color: white;
+	box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+}
+
+.poster-link:hover {
+	box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+	transform: translateY(-2px);
+}
+
+.poster-link::before {
+	content: '📋';
+	font-size: 1.1rem;
+}
+
+/* Loading Section Styling */
+.loading-section h3 {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	animation: gradientShift 3s ease infinite;
+	background-size: 200% 200%;
+}
+
+@keyframes gradientShift {
+	0%, 100% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+}
+
+/* Award/Badge Styling */
+.award-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+	color: white;
+	padding: 0.3rem 0.8rem;
+	border-radius: 15px;
+	font-size: 0.85rem;
+	font-weight: 600;
+	margin-top: 0.5rem;
+}
+
+.award-badge::before {
+	content: '🏆';
+	font-size: 1rem;
+}
+
+/* Abstract/Description */
+.publication-abstract {
+	margin-top: 1rem;
+	padding: 1rem;
+	background: rgba(102, 126, 234, 0.05);
+	border-radius: 8px;
+	font-size: 0.95rem;
+	line-height: 1.6;
+	color: #5a6c7d;
+	display: none;
+}
+
+.publication-abstract.show {
+	display: block;
+	animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Toggle Abstract Button */
+.toggle-abstract {
+	background: none;
+	border: 2px solid #667eea;
+	color: #667eea;
+	padding: 0.5rem 1rem;
+	border-radius: 20px;
+	cursor: pointer;
+	font-weight: 500;
+	font-size: 0.9rem;
+	transition: all 0.3s ease;
+	margin-top: 1rem;
+}
+
+.toggle-abstract:hover {
+	background: #667eea;
+	color: white;
+	transform: translateY(-2px);
+}
+
+/* Dark Theme Support */
+body.dark-theme #publications {
+	background: linear-gradient(to bottom, #1a1a1a, #2d2d2d);
+}
+
+body.dark-theme .publication-item {
+	background: #2d2d2d;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .publication-item h4 {
+	color: #e0e0e0;
+}
+
+body.dark-theme .publication-item:hover h4 {
+	color: #667eea;
+}
+
+body.dark-theme .publication-item .authors {
+	color: #b0b0b0;
+}
+
+body.dark-theme .publication-item .authors strong {
+	color: #e0e0e0;
+}
+
+body.dark-theme .publication-abstract {
+	background: rgba(102, 126, 234, 0.1);
+	color: #b0b0b0;
+}
+
+body.dark-theme .toggle-abstract {
+	border-color: #667eea;
+	color: #667eea;
+}
+
+body.dark-theme .toggle-abstract:hover {
+	background: #667eea;
+	color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+	.publication-item {
+		padding: 1.5rem;
+	}
+	
+	.publication-item h4 {
+		font-size: 1.2rem;
+	}
+	
+	.publication-meta {
+		gap: 1rem;
+	}
+	
+	.publication-links {
+		gap: 0.8rem;
+	}
+	
+	.paper-link,
+	.code-link,
+	.slides-link,
+	.video-link,
+	.poster-link {
+		padding: 0.5rem 1.2rem;
+		font-size: 0.9rem;
+	}
+}

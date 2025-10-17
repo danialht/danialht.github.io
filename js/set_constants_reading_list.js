@@ -5,10 +5,13 @@ import { ReadingMaterial } from "./set_constants_utils.js";
  */
 
 const readingList = [
-	new ReadingMaterial("Linear Algebra Done Right", "Sheldon Axler"),
 	new ReadingMaterial(
 		"Convex Optimization",
 		"Stephan Boyd and Lieven Vandenberghe",
+	),
+	new ReadingMaterial(
+		"Linear Algebra Done Right",
+		"Sheldon Axler"
 	),
 	new ReadingMaterial(
 		"Introduction to Electrodynamics",
@@ -22,11 +25,11 @@ const readingList = [
 		"Introduction To Classical Mechanics With Problems And Solutions",
 		"David Morin",
 	),
+	new ReadingMaterial(
+		"Algebra",
+		"Michael Artin",
+	),
 ];
-
-/**
- * Code
- */
 
 // Adding the reading materials from the array into the HTML
 const readingListElement = document.getElementById("readingList").children[0];
