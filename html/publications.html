@@ -10,23 +10,23 @@
 	</head>
 	<body>
 		<header>
-			<div id="vanta-header">
-				<div class="container vanta-content">
-					<h1 id="nameAndFamilyName" class="glitchText"></h1>
-					<p id="affiliation"></p>
+			<div class="page-header">
+				<div class="container">
+					<h1>Publications</h1>
 				</div>
 			</div>
 		</header>
 
 		<nav>
-			<ul class="navigation">
-				<li><a href="#about">About</a></li>
-				<li><a href="#projects">Projects</a></li>
-				<li><a href="#coursework">Coursework</a></li>
-				<li><a href="#readinglist">Reading list</a></li>
-				<li><a href="#publications">Publications</a></li>
-				<li><a href="#contact">Contact</a></li>
-				<li><a href="#experiences">Experiences</a></li>
+			<button class="hamburger" id="hamburger" onclick="toggleMenu()">☰</button>
+			<ul class="navigation" id="navMenu">
+				<li><a href="index.html">About</a></li>
+				<li><a href="projects.html">Projects</a></li>
+				<li><a href="coursework.html">Coursework</a></li>
+				<li><a href="reading_list.html">Reading list</a></li>
+				<li><a href="publications.html">Publications</a></li>
+				<li><a href="contact.html">Contact</a></li>
+				<li><a href="experiences.html">Experiences</a></li>
 			</ul>
 		</nav>
 
@@ -52,10 +52,7 @@
 								<p class="publication-abstract">
 									Diffusion models have emerged as powerful generative priors for high-dimensional inverse problems, yet learning them when only corrupted or noisy observations are available remains challenging. In this work, we propose a new method for training diffusion models with Expectation-Maximization (EM) from corrupted data. Our proposed method, DiffEM, utilizes conditional diffusion models to reconstruct clean data from observations in the E-step, and then uses the reconstructed data to refine the conditional diffusion model in the M-step. Theoretically, we provide monotonic convergence guarantees for the DiffEM iteration, assuming appropriate statistical conditions. We demonstrate the effectiveness of our approach through experiments on various image reconstruction tasks.
 								</p>
-								<button class="toggle-abstract" onclick="toggleAbstract(this)">Show Abstract</button>
-							</div>
-							
-							<!-- General template for each publication item: -->
+
 							<!-- <div class="publication-item">
 								<h4>Machine Learning in Natural Language Processing</h4>
 								<p class="authors">Alice Johnson, <strong>Danial Hosseintabar</strong>, Bob Wilson</p>
@@ -100,20 +97,6 @@
 				"&copy; " +
 				new Date().getFullYear() +
 				" Danial Hosseintabar. All rights reserved.";
-			
-			// Toggle abstract visibility
-			function toggleAbstract(button) {
-				const publicationItem = button.closest('.publication-item');
-				const abstract = publicationItem.querySelector('.publication-abstract');
-				
-				if (abstract.classList.contains('show')) {
-					abstract.classList.remove('show');
-					button.textContent = 'Show Abstract';
-				} else {
-					abstract.classList.add('show');
-					button.textContent = 'Hide Abstract';
-				}
-			}
 			
 			// const toggleButton = document.getElementById('theme-toggle');
 			// toggleButton.addEventListener('click', () => {
