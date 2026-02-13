@@ -16,12 +16,8 @@ GLITCH_EFFECT = true; // Adds a glitch effect on anything having in the `glitchT
 
 NAVIGATION_BAR_LINKS = {
 	About: "index.html",
-	Projects: "projects.html",
-	Coursework: "coursework.html",
 	"Reading list": "reading_list.html",
-	Contact: "contact.html",
 	Publications: "publications.html",
-	Experiences: "experiences.html",
 };
 
 /**
@@ -39,7 +35,9 @@ navigationArr = document.getElementsByClassName("navigation")[0].children;
 for (const child of navigationArr) {
 	const liElement = child.querySelector("a");
 	const insideText = liElement.innerHTML;
-	liElement.setAttribute("href", NAVIGATION_BAR_LINKS[insideText]);
+	if (NAVIGATION_BAR_LINKS[insideText]) {
+		liElement.setAttribute("href", NAVIGATION_BAR_LINKS[insideText]);
+	}
 }
 
 // Setting the glitch effect for the name on top
