@@ -25,8 +25,8 @@ NAVIGATION_BAR_LINKS = {
  */
 
 // Setting the name, family name, affiliation
-document.getElementById("nameAndFamilyName").innerHTML =
-	NAME + " " + FAMILY_NAME;
+const nameEl = document.getElementById("nameAndFamilyName");
+if (nameEl) nameEl.innerHTML = NAME + " " + FAMILY_NAME;
 // document.getElementById("affiliation").innerHTML = AFFILIATION; 
 
 // Setting the links for the navigation bar on top
@@ -126,3 +126,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	});
 });
+
+// Theme toggle
+function toggleTheme() {
+	document.body.classList.toggle('dark-theme');
+}

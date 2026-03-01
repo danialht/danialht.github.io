@@ -63,24 +63,27 @@ header button:hover {
 }
 
 #theme-toggle {
-	position: fixed;
-	top: 10px;
-	left: 10px;
-	z-index: 1000;
-	padding: 10px 20px;
-	cursor: pointer;
-	background-color: var(--primary-color);
-	color: #fff;
+	background: none;
 	border: none;
-	border-radius: 8px;
-	transition: background-color var(--transition-speed), transform 0.2s;
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	cursor: pointer;
+	color: white;
+	padding: 0 16px;
+	display: flex;
+	align-items: center;
+	line-height: 1;
+	height: 100%;
+	box-sizing: border-box;
+	transition: background-color var(--transition-speed);
 }
 
 #theme-toggle:hover {
-	background-color: var(--primary-dark);
-	transform: translateY(-2px);
+	background-color: rgba(255, 255, 255, 0.1);
 }
+
+#theme-toggle .icon-moon { display: block; }
+#theme-toggle .icon-sun  { display: none; }
+body.dark-theme #theme-toggle .icon-moon { display: none; }
+body.dark-theme #theme-toggle .icon-sun  { display: block; }
 
 nav ul {
 	list-style: none;
@@ -118,15 +121,6 @@ nav ul li a:hover {
 	max-width: 900px;
 	margin: 20px auto;
 	padding: 0 20px;
-}
-
-body.dark-theme {
-	background-color: #121212;
-	color: #ffffff;
-}
-
-body.dark-theme header {
-	background-color: #1e1e1e;
 }
 
 .navigation {
