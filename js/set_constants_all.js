@@ -29,17 +29,6 @@ const nameEl = document.getElementById("nameAndFamilyName");
 if (nameEl) nameEl.innerHTML = NAME + " " + FAMILY_NAME;
 // document.getElementById("affiliation").innerHTML = AFFILIATION; 
 
-// Setting the links for the navigation bar on top
-navigationArr = document.getElementsByClassName("navigation")[0].children;
-
-for (const child of navigationArr) {
-	const liElement = child.querySelector("a");
-	const insideText = liElement.innerHTML;
-	if (NAVIGATION_BAR_LINKS[insideText]) {
-		liElement.setAttribute("href", NAVIGATION_BAR_LINKS[insideText]);
-	}
-}
-
 // Setting the glitch effect for the name on top
 if (GLITCH_EFFECT) {
 	const textElements = document.getElementsByClassName("glitchText");

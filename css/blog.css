@@ -132,6 +132,90 @@ body.dark-theme .blog-item:hover {
 	color: var(--primary-dark);
 }
 
+/* Algorithm pseudocode */
+.algorithm {
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+	margin: 2rem 0;
+	font-size: 0.92rem;
+	overflow-x: auto;
+}
+
+.algorithm-caption {
+	background: var(--surface-color);
+	border-bottom: 2px solid var(--border-color);
+	padding: 0.6rem 1.25rem;
+	font-weight: 600;
+	color: var(--text-primary);
+}
+
+.algorithm-body {
+	padding: 0.75rem 0;
+	counter-reset: algo-line;
+	line-height: 1.75;
+}
+
+.algo-require,
+.algo-ensure {
+	display: flex;
+	gap: 0.6rem;
+	padding: 0.15rem 1.25rem;
+	color: var(--text-primary);
+}
+
+.algo-divider {
+	border: none;
+	border-top: 1px solid var(--border-color);
+	margin: 0.4rem 0;
+}
+
+.algo-line {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.75rem;
+	padding: 0.05rem 1.25rem 0.05rem 0;
+	counter-increment: algo-line;
+}
+
+.algo-line::before {
+	content: counter(algo-line) ":";
+	min-width: 2.5rem;
+	text-align: right;
+	color: var(--text-secondary);
+	font-size: 0.85em;
+	flex-shrink: 0;
+	padding-top: 0.2em;
+}
+
+.algo-line-content {
+	flex: 1;
+}
+
+.algo-indent-1 .algo-line-content { padding-left: 1.5rem; }
+.algo-indent-2 .algo-line-content { padding-left: 3rem; }
+
+.algo-keyword {
+	font-weight: 700;
+}
+
+.algo-comment {
+	color: var(--text-secondary);
+	font-style: italic;
+}
+
+/* Image captions */
+.image-container {
+	margin: 1.5rem 0;
+	text-align: center;
+}
+
+.image-caption {
+	font-size: 0.88rem;
+	color: var(--text-secondary);
+	margin-top: 0.5rem;
+	font-style: italic;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
 	.blog-item {
