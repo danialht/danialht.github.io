@@ -21,6 +21,11 @@
 			src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
 			defer
 		></script>
+	<style>
+		.shine-num {
+			text-decoration: underline;
+		}
+	</style>
 	</head>
 	<body class="dark-theme">
 
@@ -162,7 +167,10 @@
 						</p>
 						$$\theta^{(k+1)} = \arg\min_\theta \, D_{\mathrm{KL}}(\pi^{(k)}(x) \| q_\theta(x)), \tag{3}$$
 						<p>
-							where $\pi^{(k)}(x) = \mathbb{E}_{Y \sim P_Y^\star}[q_{\theta^{(k)}}(x|Y)]$ is a posterior mixture with respect to the observation distribution. There are some natural questions to ask here. Like if there is any guarantee that this will converge or not, or how fast this will converge. The answer is fortunately yes if $\mathbf{Q}$ isn't some crazy channel (obviously for any $\mathbf{Q}$ the problem is not possible since the channel could then zero out all the information and you can't do anything) It is shown that the iterative process in equation (3) is equivalent to a <a href="https://en.wikipedia.org/wiki/Mirror_descent" target="_blank">mirror descent</a> in the space of distributions with the KL divergence as the Bregman divergence (check <a href="https://arxiv.org/abs/2206.08873" target="_blank">this paper</a> out for more math heavy details).
+							where $\pi^{(k)}(x) = \mathbb{E}_{Y \sim P_Y^\star}[q_{\theta^{(k)}}(x|Y)]$ is a posterior mixture with respect to the observation distribution.<br><br>
+						There are some natural questions to ask here. Like if there is any guarantee that this will converge or not, or how fast this will converge. The answer is fortunately yes if $\mathbf{Q}$ isn't some crazy channel (obviously for any $\mathbf{Q}$ the problem is not possible since the channel could then zero out all the information and you can't do anything). In order to see more details and proofs on these questions and other questions, you should check out the <a href="https://arxiv.org/abs/2510.12691">DiffEM paper</a>.
+						
+						<br><br><strong>Fun fact:</strong> It could be proved that the iterative process in equation (3) is equivalent to a <a href="https://en.wikipedia.org/wiki/Mirror_descent" target="_blank">mirror descent</a> in the space of distributions with the KL divergence as the Bregman divergence (check <a href="https://arxiv.org/abs/2206.08873" target="_blank">this paper</a> out for more math heavy details).
 						</p>
 						<p>
 							This iterative method is shown in the following algorithm:
@@ -214,15 +222,80 @@
 								</div>
 							</div>
 						</div>
-
+						
 						<p>
 							The $L_{\text{SM}}$ loss is the typical score matching loss (from <a href="https://arxiv.org/abs/1907.05600">this great paper</a>) for the model and is defined as follows:
 						</p>
 						$$L_{\text{SM},k}(\theta) = \mathbb{E}_{t,\, X \sim \mathcal{D}_X^{(k)},\, Y \sim \mathbf{Q}(\cdot|X)} \, \mathbb{E}_{Z \sim \mathcal{N}(0, I),\, X_t = X + \sigma_t Z} \left\| \mathbf{s}_\theta(X_t, t | Y) + Z \right\|^2$$
 
+						<p>
+							After you finish training the conditional model, if you want to have an unconditional generative model you can generate a new clean dataset by conditioning it on the whole corrupted dataset and train a generative diffusion model.
+						</p>
+
 						<h2>Results</h2>
 
+						Let's take a look at one of the example experiments that we did in the paper. In this experiment we took the CIFAR-10 dataset and corrupted it with random masking with a masking probability of $0.75\%$ then we gave only the corrupted dataset and nothing else to the DiffEM algorithm and we let it run for about $20$ EM iterations. Here are some of the measurements for the final model both the conditional model that is trained in the EM loop and the unconditional model after training the conditional model.
+
+					<div class="table-container" style="overflow-x:auto; margin-top: 1.5rem;">
+						<table style="width:100%; border-collapse: collapse; text-align: center; font-size: 0.95em;">
+							<thead>
+								<tr style="border-top: 2px solid; border-bottom: 1px solid;">
+									<th style="padding: 8px 12px;">Task</th>
+									<th style="padding: 8px 12px;">Method</th>
+									<th style="padding: 8px 12px;">IS &uarr;</th>
+									<th style="padding: 8px 12px;">FID &darr;</th>
+									<th style="padding: 8px 12px;">FD<sub>DINOv2</sub> &darr;</th>
+									<th style="padding: 8px 12px;">FD<sub>&infin;</sub> &darr;</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td rowspan="4" style="padding: 8px 12px; border-right: 1px solid;">Posterior<br>Sampling</td>
+									<td style="padding: 8px 12px;">Ambient-Diffusion</td>
+									<td>7.70</td><td>30.76</td><td>260.23</td><td>256.11</td>
+								</tr>
+								<tr>
+									<td style="padding: 8px 12px;">EM-MMPS</td>
+									<td>9.77</td><td>6.49</td><td>237.02</td><td>231.80</td>
+								</tr>
+								<tr>
+									<td style="padding: 8px 12px;">DiffEM (Ours)</td>
+									<td><span class="shine-num">9.81</span></td><td>4.68</td><td>220.97</td><td>216.53</td>
+								</tr>
+								<tr style="border-bottom: 1px solid;">
+									<td style="padding: 8px 12px;">DiffEM (Warm-started)</td>
+									<td>9.66</td><td><span class="shine-num">4.66</span></td><td><span class="shine-num">186.90</span></td><td><span class="shine-num">180.70</span></td>
+								</tr>
+								<tr>
+									<td rowspan="4" style="padding: 8px 12px; border-right: 1px solid; border-top: 1px solid;">Unconditional<br>Generation</td>
+									<td style="padding: 8px 12px;">Ambient-Diffusion</td>
+									<td>6.88</td><td>28.88</td><td>1068.00</td><td>1062.98</td>
+								</tr>
+								<tr>
+									<td style="padding: 8px 12px;">EM-MMPS</td>
+									<td>8.14</td><td>13.18</td><td>643.59</td><td>640.14</td>
+								</tr>
+								<tr>
+									<td style="padding: 8px 12px;">DiffEM (Ours)</td>
+									<td><span class="shine-num">8.57</span></td><td><span class="shine-num">10.24</span></td><td>598.18</td><td>594.75</td>
+								</tr>
+								<tr style="border-bottom: 2px solid;">
+									<td style="padding: 8px 12px;">DiffEM (Warm-started)</td>
+									<td>8.49</td><td>10.33</td><td><span class="shine-num">546.07</span></td><td><span class="shine-num">541.53</span></td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
+					<p style="font-size: 0.9em; margin-top: 0.75rem;">
+						<strong>Table 1:</strong> Posterior sampling and unconditional generation performance on CIFAR-10 with random masking with corruption rate of $\rho = 0.75$ compared to Ambient-Diffusion and EM-MMPS. The details of DiffEM with warm-start are described in Section 4.1.1.
+					</p>
+
+
+					</div>
+				</div>
+
+					<h2>Visualization</h2>
+
 				</div>
 			</section>
 		</main>
