@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>DiffEM: Learning from Corrupted Data — Danial Hosseintabar</title>
+		<title>DiffEM: Learning from Corrupted Data - Danial Hosseintabar</title>
 		<link rel="stylesheet" href="../css/styles.css" />
 		<link rel="stylesheet" href="../css/blog.css" />
 		<script src="../js/set_constants_all.js" defer></script>
@@ -23,7 +23,7 @@
 		></script>
 	<style>
 		.shine-num {
-			text-decoration: underline;
+			font-weight: bold;
 		}
 	</style>
 	</head>
@@ -61,7 +61,7 @@
 					<a class="back-link" href="../blog.html">&#8592; Back to Blog</a>
 
 					<div class="blog-post-header">
-						<h1>Learning with no Clean Data Points</h1>
+						<h1>Learning Without Any Clean Datapoints</h1>
 						<div class="blog-post-meta">2026</div>
 					</div>
 
@@ -72,18 +72,22 @@
 
 						<h2>Introduction</h2>
 						<p>
-							Diffusion models have shown promising results in generative modeling. But training a diffusion model will require a large dataset containing high-quality data. In many cases in practice that is just a luxury far from reality. Most of the data on the internet is trash.
+							Diffusion models [<a href="#song2020">3</a>, <a href="#ho2020">4</a>] have shown impressive results in generative modeling. Training them, however, requires large datasets of high-quality samples, a luxury that is often far from reality. In practice, most available data is noisy, low-quality, or otherwise corrupted.
 						</p>
 						<p>
-							These diffusion models are great when it comes to learning highly complex distributions but that comes with the expensive cost of easily overfitting.
+							Diffusion models are remarkably capable of capturing highly complex distributions, but this expressive power comes at a cost: they are prone to overfitting, making data quality all the more critical.
 						</p>
 						<p>
-							In this blog we will be going over a method from <a href="https://arxiv.org/abs/2510.12691" target="_blank">DiffEM paper</a> which trains a diffusion model in a loop, and with each iteration will improve the dataset quality and train the diffusion model alongside it. We will see that this is an Expectation Maximization (EM) Algorithm, the EM approach is well-known and well-studied in inference for other problems and it is our good old friend.
+							In this post, we walk through the method from the DiffEM paper [<a href="#diffem">5</a>], which trains a diffusion model in an iterative loop, progressively improving dataset quality and updating the model in tandem. As we will see, this turns out to be an instance of the Expectation Maximization (EM) algorithm, a well-known and thoroughly studied framework for inference problems.
+						</p>
+
+						<p>
+							Several prior works have explored learning from corrupted data in related settings [<a href="#ambient">6</a>, <a href="#emmmps">7</a>, <a href="#emclean">8</a>].
 						</p>
 
 						<h2>Setup and Intuition</h2>
 						<p>
-							Before jumping right into the math and code to tackle the problem it is good to think about it a little bit and try to understand what are the intuitions behind this. Let's first make the setup clear. We have access to a dataset $D_Y = \{y_1, y_2, \ldots, y_N\}$ that comes from the data distribution which we will denote with $P_Y$. Unfortunately the dataset is corrupted, the corruption channel is denoted with $Q(\cdot|X)$ and is known, we are interested to learn the distribution $P_X^\star$ which we know satisfies the following equation:
+							Before diving into the math, it is worth pausing to build some intuition for the problem. Let's first make the setup precise. We have access to a dataset $D_Y = \{y_1, y_2, \ldots, y_N\}$ that comes from the data distribution which we will denote with $P_Y$. Unfortunately the dataset is corrupted, the corruption channel is denoted with $Q(\cdot|X)$ and is known, we are interested to learn the distribution $P_X^\star$ which we know satisfies the following equation:
 						</p>
 						$$P_Y(y) = \int_{\mathcal{X}} P_X^\star(x) \, Q(y|x) \, dx$$
 						<p>
@@ -94,7 +98,7 @@
 							Let's denote the space that $X$ and $Y$ live in with $\mathcal{X}$ and $\mathcal{Y}$ respectively. There is no assumption on these two spaces, they could be different.
 						</p>
 
-						<h2>Some Examples</h2>
+						<h3>Some Examples</h3>
 						<p>
 							Let's come up with some examples of this setup in real practical problems.
 						</p>
@@ -104,21 +108,21 @@
 						<p>
 							There are many popular corruption channels $Q$ that we could come up for this example:
 						</p>
-						<p><strong>Gaussian Noise Channel</strong></p>
-						$$Q(\cdot|X) = \mathcal{N}(X, \sigma^2 I)$$
-						<p><strong>Random Masking Channel</strong></p>
-						$$Y \sim Q(\cdot|X) \iff Y = A \odot X \quad \text{where } A_{ij} \sim \text{Ber}(0.5)$$
-						<p><strong>JPEG Compression Algorithm</strong></p>
-						$$Q(\cdot|X) = \text{JPEG}(X)$$
-						<p><strong>Gaussian Blur Channel</strong></p>
-						$$Q(\cdot|X) = X \ast K_\sigma \quad \text{where } K_\sigma \text{ is a Gaussian kernel}$$
+						<p><strong>Gaussian Noise Channel:&ensp;&ensp;</strong>$Q(\cdot|X) = \mathcal{N}(X, \sigma^2 I)$</p>
+						<p><strong>Random Masking Channel:&ensp;&ensp;</strong>$Y \sim Q(\cdot|X) \iff Y = A \odot X \quad \text{where } A_{ij} \sim \text{Ber}(0.5)$</p>
+						<p><strong>JPEG Compression Algorithm:&ensp;&ensp;</strong>$Q(\cdot|X) = \text{JPEG}(X)$</p>
+						<p><strong>Gaussian Blur Channel:&ensp;&ensp;</strong>$Q(\cdot|X) = X \ast K_\sigma \quad \text{where } K_\sigma \text{ is a Gaussian kernel}$</p>
 
 						<div class="image-container">
 							<img src="../assets/images/blog_diffem/corruption_channel_examples.png" alt="Corrupted Samples" style="width: 100%; height: auto;"/>
 							<p class="image-caption">Corrupted samples from the toy dataset.</p>
 						</div>
 
-						<h2>Method</h2>
+						<h2> Preliminaries </h2>
+
+						<p>
+							Here we will mostly focus on Expectation Maximization. Eventhough our method uses diffusion models we won't discuss preliminaries of them in here.
+						</p>
 
 						<p>
 							Let's say that we are seeking a model learning the joint distribution class $\{q_{\theta}(x, y)\}_\theta$ and we would like to find $\theta$ such that the following maximization on log likelihood would hold:
@@ -168,9 +172,9 @@
 						$$\theta^{(k+1)} = \arg\min_\theta \, D_{\mathrm{KL}}(\pi^{(k)}(x) \| q_\theta(x)), \tag{3}$$
 						<p>
 							where $\pi^{(k)}(x) = \mathbb{E}_{Y \sim P_Y^\star}[q_{\theta^{(k)}}(x|Y)]$ is a posterior mixture with respect to the observation distribution.<br><br>
-						There are some natural questions to ask here. Like if there is any guarantee that this will converge or not, or how fast this will converge. The answer is fortunately yes if $\mathbf{Q}$ isn't some crazy channel (obviously for any $\mathbf{Q}$ the problem is not possible since the channel could then zero out all the information and you can't do anything). In order to see more details and proofs on these questions and other questions, you should check out the <a href="https://arxiv.org/abs/2510.12691">DiffEM paper</a>.
+						Several natural questions arise at this point, most importantly, whether this procedure is guaranteed to converge, and if so, at what rate. Fortunately, the answer is yes, provided $\mathbf{Q}$ is not a pathological channel (of course, if $\mathbf{Q}$ were to zero out all information, the problem would be unsolvable regardless of method). For detailed convergence guarantees and proofs, we refer the reader to the DiffEM paper [<a href="#diffem">5</a>].
 						
-						<br><br><strong>Fun fact:</strong> It could be proved that the iterative process in equation (3) is equivalent to a <a href="https://en.wikipedia.org/wiki/Mirror_descent" target="_blank">mirror descent</a> in the space of distributions with the KL divergence as the Bregman divergence (check <a href="https://arxiv.org/abs/2206.08873" target="_blank">this paper</a> out for more math heavy details).
+						<br><br><strong>Fun fact:</strong> It could be proved that the iterative process in equation (3) is equivalent to a <a href="https://en.wikipedia.org/wiki/Mirror_descent" target="_blank">mirror descent</a> in the space of distributions with the KL divergence as the Bregman divergence [<a href="#aubin">1</a>].
 						</p>
 						<p>
 							This iterative method is shown in the following algorithm:
@@ -224,7 +228,7 @@
 						</div>
 						
 						<p>
-							The $L_{\text{SM}}$ loss is the typical score matching loss (from <a href="https://arxiv.org/abs/1907.05600">this great paper</a>) for the model and is defined as follows:
+							The $L_{\text{SM}}$ loss is the typical score matching loss [<a href="#song2020">3</a>] for the model and is defined as follows:
 						</p>
 						$$L_{\text{SM},k}(\theta) = \mathbb{E}_{t,\, X \sim \mathcal{D}_X^{(k)},\, Y \sim \mathbf{Q}(\cdot|X)} \, \mathbb{E}_{Z \sim \mathcal{N}(0, I),\, X_t = X + \sigma_t Z} \left\| \mathbf{s}_\theta(X_t, t | Y) + Z \right\|^2$$
 
@@ -232,9 +236,9 @@
 							After you finish training the conditional model, if you want to have an unconditional generative model you can generate a new clean dataset by conditioning it on the whole corrupted dataset and train a generative diffusion model.
 						</p>
 
-						<h2>Results</h2>
+						<h2>Experimental Results</h2>
 
-						Let's take a look at one of the example experiments that we did in the paper. In this experiment we took the CIFAR-10 dataset and corrupted it with random masking with a masking probability of $0.75\%$ then we gave only the corrupted dataset and nothing else to the DiffEM algorithm and we let it run for about $20$ EM iterations. Here are some of the measurements for the final model both the conditional model that is trained in the EM loop and the unconditional model after training the conditional model.
+						Let's look at one of the experiments from the paper. We took the CIFAR-10 dataset, corrupted it with random masking at a rate of $\rho = 0.75$, and provided only the corrupted observations to DiffEM, with no additional information. The algorithm was run for approximately $20$ EM iterations. The table below reports evaluation metrics for the final conditional model (trained within the EM loop) and the unconditional model obtained afterward.
 
 					<div class="table-container" style="overflow-x:auto; margin-top: 1.5rem;">
 						<table style="width:100%; border-collapse: collapse; text-align: center; font-size: 0.95em;">
@@ -291,11 +295,63 @@
 					</p>
 
 
-					</div>
-				</div>
-
 					<h2>Visualization</h2>
 
+					<div class="image-container">
+						<img src="../assets/images/blog_diffem/visual1.png" alt="DiffEM Visualization" style="width: 100%; height: auto;"/>
+					</div>
+
+					<div class="image-container">
+						<img src="../assets/images/blog_diffem/visual2.png" alt="DiffEM Unconditional Samples CelebA" style="width: 100%; height: auto;"/>
+						<p class="image-caption">Unconditional samples from the experiment with CelebA dataset [<a href="#celeba">2</a>] with $\rho = 0.5$ corruption probability.</p>
+					</div>
+
+					<h2>References</h2>
+					<ol class="references">
+						<li id="aubin">
+							Pierre-Cyril Aubin-Frankowski, Anna Korba, Flavien Léger (2022).
+							<a href="https://arxiv.org/abs/2206.08873" target="_blank">Mirror Descent with Relative Smoothness in Measure Spaces, with application to Sinkhorn and EM</a>.
+						</li>
+						<li id="celeba">
+							Ziwei Liu, Ping Luo, Xiaogang Wang, Xiaoou Tang (2015).
+							<a href="https://mmlab.ie.cuhk.edu.hk/projects/CelebA.html" target="_blank">Deep Learning Face Attributes in the Wild</a>.
+							<em>Proceedings of International Conference on Computer Vision (ICCV)</em>.
+						</li>
+						<li id="song2020">
+							Yang Song and Stefano Ermon (2020).
+							<a href="https://arxiv.org/abs/1907.05600" target="_blank">Generative Modeling by Estimating Gradients of the Data Distribution</a>.
+							<em>arXiv:1907.05600</em>.
+						</li>
+						<li id="ho2020">
+							Jonathan Ho, Ajay Jain, and Pieter Abbeel (2020).
+							<a href="https://arxiv.org/abs/2006.11239" target="_blank">Denoising Diffusion Probabilistic Models</a>.
+							<em>arXiv:2006.11239</em>.
+						</li>
+						<li id="diffem">
+							Danial Hosseintabar, Fan Chen, Giannis Daras, Antonio Torralba, and Constantinos Daskalakis (2025).
+							<a href="https://arxiv.org/abs/2510.12691" target="_blank">DiffEM: Learning from Corrupted Data with Diffusion Models via Expectation Maximization</a>.
+							<em>arXiv:2510.12691</em>.
+						</li>
+						<li id="ambient">
+							Giannis Daras, Kulin Shah, Yuval Dagan, Aravind Gollakota, Alexandros G. Dimakis, and Adam Klivans (2023).
+							<a href="https://arxiv.org/abs/2305.19256" target="_blank">Ambient Diffusion: Learning Clean Distributions from Corrupted Data</a>.
+							<em>arXiv:2305.19256</em>.
+						</li>
+						<li id="emmmps">
+							François Rozet, Gérôme Andry, François Lanusse, and Gilles Louppe (2025).
+							<a href="https://arxiv.org/abs/2405.13712" target="_blank">Learning Diffusion Priors from Observations by Expectation Maximization</a>.
+							<em>arXiv:2405.13712</em>.
+						</li>
+						<li id="emclean">
+							Weimin Bai, Yifei Wang, Wenzheng Chen, and He Sun (2024).
+							<a href="https://arxiv.org/abs/2407.01014" target="_blank">An Expectation-Maximization Algorithm for Training Clean Diffusion Models from Corrupted Observations</a>.
+							<em>arXiv:2407.01014</em>.
+						</li>
+					</ol>
+
+					</div>
+				</div>
+					
 				</div>
 			</section>
 		</main>
