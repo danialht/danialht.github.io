@@ -118,6 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Theme toggle
 function toggleTheme() {
+	document.documentElement.classList.add('theme-transitioning');
 	const isDark = document.documentElement.classList.toggle('dark-theme');
 	localStorage.setItem('theme', isDark ? 'dark' : 'light');
+	setTimeout(() => document.documentElement.classList.remove('theme-transitioning'), 300);
 }

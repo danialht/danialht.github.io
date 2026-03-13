@@ -12,6 +12,12 @@
 	--transition-speed: 0.3s;
 }
 
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+	transition: background-color 0.3s, color 0.3s, border-color 0.3s !important;
+}
+
 html.dark-theme {
 	--primary-color: #818cf8; /* Indigo 400 */
 	--primary-dark: #6366f1; /* Indigo 500 */
