@@ -118,5 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Theme toggle
 function toggleTheme() {
-	document.body.classList.toggle('dark-theme');
+	const isDark = document.documentElement.classList.toggle('dark-theme');
+	localStorage.setItem('theme', isDark ? 'dark' : 'light');
 }

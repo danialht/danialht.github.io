@@ -12,7 +12,7 @@
 	--transition-speed: 0.3s;
 }
 
-body.dark-theme {
+html.dark-theme {
 	--primary-color: #818cf8; /* Indigo 400 */
 	--primary-dark: #6366f1; /* Indigo 500 */
 	--primary-light: #a5b4fc; /* Indigo 300 */
@@ -82,8 +82,8 @@ header button:hover {
 
 #theme-toggle .icon-moon { display: block; }
 #theme-toggle .icon-sun  { display: none; }
-body.dark-theme #theme-toggle .icon-moon { display: none; }
-body.dark-theme #theme-toggle .icon-sun  { display: block; }
+html.dark-theme #theme-toggle .icon-moon { display: none; }
+html.dark-theme #theme-toggle .icon-sun  { display: block; }
 
 nav ul {
 	list-style: none;
@@ -134,7 +134,7 @@ nav ul li a:hover {
 	margin: 0;
 }
 
-body.dark-theme .navigation {
+html.dark-theme .navigation {
 	background-color: var(--nav-bg);
 }
 
@@ -430,11 +430,11 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 /* Dark theme support for hero */
-body.dark-theme .hero-header {
+html.dark-theme .hero-header {
     background: linear-gradient(135deg, var(--bg-color) 0%, var(--surface-color) 100%);
 }
 
-body.dark-theme .hero-header::before {
+html.dark-theme .hero-header::before {
     background: rgba(0, 0, 0, 0.6);
 }
 
