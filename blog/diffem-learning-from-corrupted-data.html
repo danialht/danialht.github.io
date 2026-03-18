@@ -67,7 +67,7 @@
 
 					<div class="blog-post-header">
 						<h1>Learning Without Any Clean Datapoints</h1>
-						<div class="blog-post-meta">2026</div>
+						<div class="blog-post-meta">March 2026</div>
 					</div>
 
 					<div class="blog-post-body">
@@ -77,68 +77,99 @@
 
 						<h2>Introduction</h2>
 						<p>
-							Diffusion models [<a href="#song2020">3</a>, <a href="#ho2020">4</a>] have shown impressive results in generative modeling. Training them, however, requires large datasets of high-quality samples, a luxury that is often far from reality. In practice, most available data is noisy, low-quality, or otherwise corrupted.
+							Diffusion [<a href="#ho2020">4</a>, <a href="#sohldickstein2015">9</a>] and score-based models [<a href="#song2020">3</a>] have shown impressive results in generative modeling. For a good portion of the past decade GANs [<a href="#goodfellow2014">10</a>] were the most popular models for generating images, however training GANs is usually hard because of stability issues. Diffusion models outperformed GANs [<a href="#dhariwal2021">11</a>] and replaced them in the past few years.
 						</p>
 						<p>
 							Diffusion models are remarkably capable of capturing highly complex distributions, but this expressive power comes at a cost: they are prone to overfitting, making data quality all the more critical.
+							Also, it requires large datasets of high-quality samples, a luxury that is often far from reality. In practice, most available data is noisy, low-quality, or otherwise corrupted.
 						</p>
 						<p>
-							In this post, we walk through the method from the DiffEM paper [<a href="#diffem">5</a>], which trains a diffusion model in an iterative loop, progressively improving dataset quality and updating the model in tandem. As we will see, this turns out to be an instance of the Expectation Maximization (EM) algorithm, a well-known and thoroughly studied framework for inference problems.
+							This will give rise to a natural question: <strong>Is it possible to train a generative model on a dataset consisting of these corrupted samples and still learn the underlying distribution of the clean data?</strong>
+						</p>
+						<p>
+							The answer is <strong>yes</strong>.
+						</p>
+						<p>
+							In this post, we will introduce a method called <em>DiffEM</em> (a mix of <em>Diff</em> for Diffusion and <em>EM</em> for Expectation-Maximization) [<a href="#diffem">5</a>], which trains a diffusion model in an iterative loop, progressively improving dataset quality and updating the model in tandem. As we will see, this turns out to be an instance of the Expectation Maximization (EM) algorithm, a well-known and thoroughly studied framework for inference problems.
 						</p>
 
 						<p>
 							Several prior works have explored learning from corrupted data in related settings [<a href="#ambient">6</a>, <a href="#emmmps">7</a>, <a href="#emclean">8</a>].
 						</p>
+						<h2>Setup and Notation</h2>
+						<p>
+							Let's first make the setup precise. Assume you are given a dataset $D_Y = \{y_1, y_2, \ldots, y_N\}$ that comes from
+							the data distribution $P_Y^\star$. We also call these datapoints $y_i$ <em>observations</em>. Unfortunately the dataset is corrupted.
+							What this means is that under the hood there is some corruption process going on. You can think of the process being like the following:
+							a clean sample $X$ is taken from the &ldquo;clean&rdquo; distribution $P_X^\star$ and it goes through some deterministic/non-deterministic
+							corruption process which creates a sample $Y$. The figure below illustrates this process:
+						</p>
 
-						<h2>Setup and Intuition</h2>
+						<div class="image-container">
+							<img src="../assets/images/blog_diffem/corruption_process.png" alt="Corruption Process" style="width: 100%; height: auto;"/>
+						</div>
+
 						<p>
-							Before diving into the math, it is worth pausing to build some intuition for the problem. Let's first make the setup precise. We have access to a dataset $D_Y = \{y_1, y_2, \ldots, y_N\}$ that comes from the data distribution which we will denote with $P_Y$. Unfortunately the dataset is corrupted, the corruption channel is denoted with $Q(\cdot|X)$ and is known, we are interested to learn the distribution $P_X^\star$ which we know satisfies the following equation:
+							So conditioned on knowing the clean sample $X$, there is some conditional distribution on $Y$.
+							This conditional distribution is called the corruption channel, we will denote it by $Q(\cdot|X)$.
 						</p>
-						$$P_Y(y) = \int_{\mathcal{X}} P_X^\star(x) \, Q(y|x) \, dx$$
+
 						<p>
-							or in a more compact form we can write it as the pushforward of $P_X^\star$ through the channel $Q$ (as the information theory enjoyers like it):
+							Using the bayes' rule you can compute the distribution of $Y$, $P_Y^\star$, using $Q$ and $P_X^\star$:
+							$$P_Y^\star(y) = \int_{\mathcal{X}} P_X^\star(x) \, Q(y|x) \, dx$$
+							where $\mathcal{X}$ is the space that $X$ lives in. There is also a more compact way to write the same
+							equation so that we could avoid writing integrals each time:
+							$$
+								P_Y^\star = Q \# P_X^\star
+							$$
+							Which is read &ldquo;the pushforward of $P_X^\star$ through the channel $Q$&rdquo;.
+							This is a common notation in information theory and optimal transport.
 						</p>
-						$$P_Y = Q \# P_X^\star$$
 						<p>
-							Let's denote the space that $X$ and $Y$ live in with $\mathcal{X}$ and $\mathcal{Y}$ respectively. There is no assumption on these two spaces, they could be different.
+							We will not assume that $X$ and $Y$ live in the same space, for example $X$ could be an image living in
+							$\mathbb{R}^{3 \times 512 \times 512}$ and y could be a real vector in $\mathbb{R}^{10}$. We will denote
+							the space that $Y$ lives in with $\mathcal{Y}$.
 						</p>
 
 						<h3>Some Examples</h3>
 						<p>
-							Let's come up with some examples of this setup in real practical problems.
-						</p>
-						<p>
-							$\mathcal{Y} = \{$A dataset in the wild that are not curated, so the images are not good quality$\}$ and you want to learn the distribution of the good quality underlying images.
-						</p>
-						<p>
-							There are many popular corruption channels $Q$ that we could come up for this example:
+							Here are some examples of different corruption channels.
 						</p>
 						<p><strong>Gaussian Noise Channel:&ensp;&ensp;</strong>$Q(\cdot|X) = \mathcal{N}(X, \sigma^2 I)$</p>
 						<p><strong>Random Masking Channel:&ensp;&ensp;</strong>$Y \sim Q(\cdot|X) \iff Y = A \odot X \quad \text{where } A_{ij} \sim \text{Ber}(0.5)$</p>
 						<p><strong>JPEG Compression Algorithm:&ensp;&ensp;</strong>$Q(\cdot|X) = \text{JPEG}(X)$</p>
-						<p><strong>Gaussian Blur Channel:&ensp;&ensp;</strong>$Q(\cdot|X) = X \ast K_\sigma \quad \text{where } K_\sigma \text{ is a Gaussian kernel}$</p>
+						<p><strong>Gaussian Blur Channel:&ensp;&ensp;</strong>$Q(\cdot|X) = K_\sigma \ast X \quad \text{where } K_\sigma \text{ is a Gaussian kernel}$</p>
 
 						<div class="image-container">
 							<img src="../assets/images/blog_diffem/corruption_channel_examples.png" alt="Corrupted Samples" style="width: 100%; height: auto;"/>
-							<p class="image-caption">Corrupted samples from the toy dataset.</p>
+							<p class="image-caption">One sample from AFHQ <a href="#afhq">[9]</a> and different corrupted versions of it.</p>
 						</div>
 
 						<h2> Preliminaries </h2>
 
 						<p>
-							Here we will mostly focus on Expectation Maximization. Eventhough our method uses diffusion models we won't discuss preliminaries of them in here.
+							Here we will mostly focus on Expectation Maximization. Even though our method uses diffusion models (any generative model would work for the algorithm) we won't discuss preliminaries of them in here (you should take a look at <a href="diffusion-models-an-introduction.html">this blog post</a> if you are interested in learning more about diffusion models).
 						</p>
 
 						<p>
-							Let's say that we are seeking a model learning the joint distribution class $\{q_{\theta}(x, y)\}_\theta$ and we would like to find $\theta$ such that the following maximization on log likelihood would hold:
+							As we had earlier, there are two random variables $X\sim P_X^\star$ and $Y\sim P_Y^\star$, $X$ is the unknown <em>latent</em> variable, and $Y$ is the <em>observation</em>, the data that we have.
+							We will denote the learned distribution with $q_\theta$, so we will use $q_\theta(x, y)$ for the joint PDF function,
+							along with $q_\theta(x)$ and $q_\theta(y)$ for the learned marginals.
+							We further assume that the conditional distribution of $Y$ given $X$ is known, we will denote that with $Q(\cdot | X)$.
+							We are seeking a $\theta$ that will maximize the likelihood:
+							<!-- . The likelihood is defined as:
+							$$\mathcal{L}(\theta) = \mathbb{E}_{Y \sim P_Y^\star} \log q_\theta(y)$$ -->
 						</p>
-						$$\max_\theta \mathcal{L}(\theta) \text{ where } \mathcal{L}(\theta) = \textcolor{blue}{\mathbb{E}_{Y \sim P_Y^\star} \log q_\theta(y)} \tag{1}$$
+							$$\begin{aligned}
+							&\max_\theta \mathcal{L}(\theta) \\
+							&\text{where } \mathcal{L}(\theta) = \textcolor[RGB]{33,118,255}{\mathbb{E}_{Y \sim P_Y^\star} \log q_\theta(y)}
+						\end{aligned} \tag{1}$$
 						<p>
 							Which is equivalent to minimizing the KL divergence between $P_Y^\star$ and $q_\theta$:
 						</p>
-						$$D_{\mathrm{KL}}(P_Y^\star \| q_\theta) = \underbrace{\textcolor{blue}{-\mathbb{E}_{Y \sim P_Y^\star} \log q_\theta(Y)}}_{\text{function of } \theta} + \underbrace{\textcolor{red}{\mathbb{E}_{Y \sim P_Y^\star} \log P_Y^\star(Y)}}_{\text{constant w.r.t.}\ \theta} \tag{2}$$
+							$$D_{\mathrm{KL}}(P_Y^\star \| q_\theta(y)) = \underbrace{\textcolor[RGB]{33,118,255}{-\mathbb{E}_{Y \sim P_Y^\star} \log q_\theta(Y)}}_{\text{function of } \theta} + \underbrace{\textcolor{red}{\mathbb{E}_{Y \sim P_Y^\star} \log P_Y^\star(Y)}}_{\text{constant w.r.t.}\ \theta} \tag{2}$$
 						<p>
-							Since the <span style="color: blue">blue terms</span> in equations (1) and (2) are equivalent up to a sign, and the <span style="color: red">red term</span> is a constant with respect to $\theta$, minimizing the KL in equation (2) reduces to optimizing its first term alone, which is exactly the maximization in equation (1).
+							Since the <span style="color: rgb(33, 118, 255)">blue terms</span> in equations (1) and (2) are equivalent up to a sign, and the <span style="color: red">red term</span> is a constant with respect to $\theta$, minimizing the KL in equation (2) reduces to optimizing its first term alone, which is exactly the maximization in equation (1).
 						</p>
 						<p>
 							It's not really feasible to directly optimize this, but there are ways to go around it. Let's try to maximize some lower bound on $\mathcal{L}(\theta)$ instead of trying to maximize it directly. We could use the following <a href="https://en.wikipedia.org/wiki/Evidence_lower_bound" target="_blank">ELBO bound</a> for all the distributions $q_\phi$:
@@ -153,10 +184,10 @@
 						</p>
 						$$\begin{aligned}
 							&\mathbb{E}_{Y \sim P_Y^\star} \mathbb{E}_{X \sim q_\phi(\cdot|Y)} \log \frac{q_\theta(X, Y)}{q_\phi(X|Y)} \\
-							&\quad= \underbrace{\textcolor{blue}{\mathbb{E}_{Y \sim P_Y^\star} \mathbb{E}_{X \sim q_\phi(\cdot|Y)} \log q_\theta(X, Y)}}_{\text{function of } \theta} - \underbrace{\textcolor{red}{\mathbb{E}_{Y \sim P_Y^\star} \mathbb{E}_{X \sim q_\phi(\cdot|Y)} \log q_\phi(X|Y)}}_{\text{constant w.r.t.}\ \theta}
+							&\quad= \underbrace{\textcolor[RGB]{33,118,255}{\mathbb{E}_{Y \sim P_Y^\star} \mathbb{E}_{X \sim q_\phi(\cdot|Y)} \log q_\theta(X, Y)}}_{\text{function of } \theta} - \underbrace{\textcolor{red}{\mathbb{E}_{Y \sim P_Y^\star} \mathbb{E}_{X \sim q_\phi(\cdot|Y)} \log q_\phi(X|Y)}}_{\text{constant w.r.t.}\ \theta}
 						\end{aligned}$$
 						<p>
-							Since the <span style="color: red">red term</span> does not depend on $\theta$, maximizing the ELBO over $\theta$ reduces to maximizing the <span style="color: blue">blue term</span> alone. We have said that $q_\phi$ could be any distribution and if you pay close attention to the first term, one of the expectations is taken over $q_\phi$, so it better be something that we <strong>already have learned</strong> and we <strong>can sample from</strong>. This is the first spark of why we are going to use an Expectation Maximization Algorithm!
+							Since the <span style="color: red">red term</span> does not depend on $\theta$, maximizing the ELBO over $\theta$ reduces to maximizing the <span style="color: rgb(33, 118, 255)">blue term</span> alone. We have said that $q_\phi$ could be any distribution and if you pay close attention to the first term, one of the expectations is taken over $q_\phi$, so it better be something that we <strong>already have learned</strong> and we <strong>can sample from</strong>. This is the first spark of why we are going to use an Expectation Maximization Algorithm!
 						</p>
 						<p>
 							In particular, the EM algorithm can be succinctly written as: Starting from an initial point $\theta^{(0)}$, iterate
@@ -176,8 +207,17 @@
 						</p>
 						$$\theta^{(k+1)} = \arg\min_\theta \, D_{\mathrm{KL}}(\pi^{(k)}(x) \| q_\theta(x)), \tag{3}$$
 						<p>
-							where $\pi^{(k)}(x) = \mathbb{E}_{Y \sim P_Y^\star}[q_{\theta^{(k)}}(x|Y)]$ is a posterior mixture with respect to the observation distribution.<br><br>
-						Several natural questions arise at this point, most importantly, whether this procedure is guaranteed to converge, and if so, at what rate. Fortunately, the answer is yes, provided $\mathbf{Q}$ is not a pathological channel (of course, if $\mathbf{Q}$ were to zero out all information, the problem would be unsolvable regardless of method). For detailed convergence guarantees and proofs, we refer the reader to the DiffEM paper [<a href="#diffem">5</a>].
+							where $\pi^{(k)}(x) = \mathbb{E}_{Y \sim P_Y^\star}[q_{\theta^{(k)}}(x|Y)]$ is a posterior mixture with respect to
+							the observation distribution. In here, the word mixture means that it is a convex combination of other distribution
+							densities, the coefficients here are $P_Y(y)$.<br><br>
+							Several natural questions arise at this point, most importantly, whether this procedure is guaranteed to converge,
+							and if so, is the rate of convergence fast or slow? Are there any extra conditions on $Q$? Fortunately, we could
+							show in theory and verify in practice that the method will improve after each iteration and will converge, provided
+							$\mathbf{Q}$ is not a pathological channel (of course, if $\mathbf{Q}$ were to zero out all information, the problem
+							would be unsolvable regardless of method). For detailed convergence guarantees and proofs, we refer the reader to
+							the DiffEM paper [<a href="#diffem">5</a>].
+							In the following sections here we will talk about what it means for $Q$ to be a reasonable corruption channel, and we will
+							show that the distribution will improve after each iteration.
 						
 						<br><br><strong>Fun fact:</strong> It could be proved that the iterative process in equation (3) is equivalent to a <a href="https://en.wikipedia.org/wiki/Mirror_descent" target="_blank">mirror descent</a> in the space of distributions with the KL divergence as the Bregman divergence [<a href="#aubin">1</a>].
 						</p>
@@ -240,6 +280,104 @@
 						<p>
 							After you finish training the conditional model, if you want to have an unconditional generative model you can generate a new clean dataset by conditioning it on the whole corrupted dataset and train a generative diffusion model.
 						</p>
+						
+						<h2>Reasonable Corruption Channel</h2>
+							<h3>Identifiability</h3>
+							<p>
+								Not every corruption channel makes the problem tractable. Some channels can make recovery hard or outright impossible,
+								for instance, a channel that maps everything to zero deterministically destroys all information about the clean data.
+								In the <em>DiffEM</em> paper, we show that a mild <em>identifiability</em> condition on the channel is sufficient for
+								convergence at an exponential rate. Here we give intuition for what identifiability means, without going through all
+								the technical details.
+							</p>
+							<p>
+								In statistics, identifiability has a really close meaning to injectivity. It means that the channel should not map
+								two different clean distributions to the same thing, for example, look at the image below, assume that you are given
+								the observation distribution and you know that the corruption channel is a small random gaussian noise, then you can
+								instantly say that the S-shaped distribution on the left is the the clean distribution. Well, in fact, you can show
+								that if the corruption channel is a gaussian noise, then we do have identifiability, i.e. two different clean distributions
+								have different noisy distribution. 
+							</p>
+							<div class="image-container">
+								<img src="../assets/images/blog_diffem/S_shaped_clean_vs_observation.png" alt="S-shaped clean vs observation" style="width: 100%; height: auto;"/>
+							</div>
+							<p>
+								Sometimes identifiability might be refferd to as being <em>invertible</em>, this is essentially the same, assume a
+								clean distribution $P_X$ is mapped to some dirty distribution $P_Y$, the mapping is some function $f$. (which is
+								doing the pushforward operation $f(P_X) = Q\# P_X$), then, identifiability means that $f$ is reversible:
+							</p>
+								$$f(P_X) = P_Y \Rightarrow f^{-1}(P_Y) = P_X$$
+							<p>
+								Which means that it is reversible on distribution level, but not necessarily on sample level i.e. given a noisy sample
+								you might not be able to recover the clean sample, but given the distribution of the noisy data, you can recover the
+								distribution of the clean data.
+							</p>
+							<h3>Examples</h3>
+							<p>
+								<p>
+									Let's take a look at two examples. For each example there is two possibilities, either it is not identifiable
+									which means that we should find some counter-example (find two distributions that are mapped to the same distribution
+									under corruption) or it is identifiable and we should prove it.
+								</p>
+								<p>
+									<strong>Example 1 (Projection Channel):</strong> Consider the distribution $P_X$ on the 2D plane, and the corruption channel $Q_1$
+									that takes each sample from distribution $P_X$ on the 2D plane, and projects it on to the $y$ axis and returns
+									the $y$, so $P_Y$ is a distribution on the real axis.
+								</p>
+								<p>
+									<strong>Example 2 (Random Projection Channel):</strong> Consider a distribution $P_X$ on the 2D plane, and the corruption channel $Q_2$
+									that takes each sample $x \in \mathbb{R}^2$ and picks a unit vector $u$ uniformly at random from the unit circle.
+									It then returns the pair $Y = (\theta, u^\top X)$, where $\theta \in [0, 2\pi)$ is the angle of $u$ with the positive $x$-axis
+									and $u^\top X$ is the dot product of $u$ with the sample, i.e. the signed length of the projection of $X$ onto $u$.
+									So $P_Y$ is a distribution on the cylinder $[0, 2\pi) \times \mathbb{R}$.
+								</p>
+								
+								<div class="image-container">
+									<img src="../assets/images/blog_diffem/example_identifiability_corruptions.png" alt="S-shaped identifiability" style="width: 100%; height: auto;"/>
+								</div>
+
+								<p>Now let's analyze the examples.</p>
+
+								<p>
+									Example 1: Let's consider two different distributions $P_1=\mathcal{N}(0, \sigma^2)$ and $P_2=\mathcal{N}(\mu, \sigma^2)$,
+									Since we only shifted one distribution by $\mu$ and the corruption channel $Q_1$ is a projection on the $y$ axis, we have
+									$Q_1\# P_1 = Q_1\# P_2$. Thus here we don't have identifiability. $\square$
+								</p>
+
+								<p>
+									Example 2:
+									Suppose that $P_1$ and $P_2$ have the same pushforward distribution through $Q_2$, thus $Q\#P_1 = Q\#P_2=P_Y$.
+									Each sample in $P_Y = Q\#P_i$ is of the form
+									$$\begin{pmatrix} u^TX \\ \Theta \end{pmatrix}$$
+									By fixing the second coordinate, and looking at the conditional distribution, we have the distribution of $u^TX$
+									for any fixed $u$ with $||u||=1$. And this distribution will be the same for both $P_1$ and $P_2$, since we they have the same pushforward.
+									Now let's take a look at the characteristic function of the distribution of $P_X$:
+									$$\phi_{P_X}(t) = \mathbb{E}_{X \sim P_X} e^{i t^T X}$$
+									Now for any $t\in \mathbb{R}^2$, you could rewrite $t$ as $t=r u$, where $r=||t||$
+									and $u$ is a unit vector. Thus the characteristic function can be rewritten as:
+									$$\phi_{P_X}(t) = \mathbb{E}_{X \sim P_X} e^{i r u^T X}$$
+									Now, since we have the distribution of $u^TX$ for any $u$, and it is the same for each of the two distributions,
+									we have $\phi_{P_1}(t) = \phi_{P_2}(t)$ for all $t$, and thus $P_1=P_2$. Thus we have identifiability. $\square$
+								</p>
+
+							</p>
+
+						<h2>Monotonic Improvement</h2>
+							<p>
+							It is notable that the distribution that you learn in each iteration will be always some improvement over the previous iteration. This was verified in practice, by looking at the figures or the evaluations after each EM iteration. This is also proved in theory, in the paper we show:
+
+							$$\underbrace{D_{\mathrm{KL}}(P_Y^\star \| P_Y^{(k+1)})}_{\text{error of prior } \pi^{(k+1)}} \leq \underbrace{D_{\mathrm{KL}}(P_Y^\star \| P_Y^{(k)})}_{\text{error of prior } \pi^{(k)}} - \underbrace{D_{\mathrm{KL}}(\pi^{(k+1)} \| \pi^{(k)})}_{\text{difference between priors}} + \underbrace{\varepsilon_{\mathrm{SM}}^{(k)}}_{\text{score-matching error of } q_{\theta^{(k+1)}}}$$
+
+							Where $\pi^{(k)}$ denotes the distribution on the prior in the $k$-th iteration, i.e. the distribution on $X$ in $k$-th iteration, which we know satisfies the pushforward equation $P_Y^{(k)} = Q\# \pi^{(k)}$.
+							</p>
+							
+							<p>
+							The last term could be expanded as:
+							$$\varepsilon_{\mathrm{SM}}^{(k)} = \mathbb{E}_{Y \sim P_Y^\star} D_{\mathrm{KL}}(q_{\theta^{(k+1)}}(\cdot|Y) \| P^{(k)}(\cdot|Y)).$$
+							
+							We can see that $\varepsilon^{(k)}_{\mathrm{SM}}$ appears because of the error our diffusion model, this term only grows when the model is incapable of learning the distribution well.
+							</p>
+
 
 						<h2>Experimental Results</h2>
 
@@ -261,36 +399,36 @@
 								<tr>
 									<td rowspan="4" style="padding: 8px 12px; border-right: 1px solid;">Posterior<br>Sampling</td>
 									<td style="padding: 8px 12px;">Ambient-Diffusion</td>
-									<td>7.70</td><td>30.76</td><td>260.23</td><td>256.11</td>
+									<td>$7.70$</td><td>$30.76$</td><td>$260.23$</td><td>$256.11$</td>
 								</tr>
 								<tr>
 									<td style="padding: 8px 12px;">EM-MMPS</td>
-									<td>9.77</td><td>6.49</td><td>237.02</td><td>231.80</td>
+									<td>$9.77$</td><td>$6.49$</td><td>$237.02$</td><td>$231.80$</td>
 								</tr>
 								<tr>
 									<td style="padding: 8px 12px;">DiffEM (Ours)</td>
-									<td><span class="shine-num">9.81</span></td><td>4.68</td><td>220.97</td><td>216.53</td>
+									<td><span class="shine-num">$\mathbf{9.81}$</span></td><td>$4.68$</td><td>$220.97$</td><td>$216.53$</td>
 								</tr>
 								<tr style="border-bottom: 1px solid;">
 									<td style="padding: 8px 12px;">DiffEM (Warm-started)</td>
-									<td>9.66</td><td><span class="shine-num">4.66</span></td><td><span class="shine-num">186.90</span></td><td><span class="shine-num">180.70</span></td>
+									<td>$9.66$</td><td><span class="shine-num">$\mathbf{4.66}$</span></td><td><span class="shine-num">$\mathbf{186.90}$</span></td><td><span class="shine-num">$\mathbf{180.70}$</span></td>
 								</tr>
 								<tr>
 									<td rowspan="4" style="padding: 8px 12px; border-right: 1px solid; border-top: 1px solid;">Unconditional<br>Generation</td>
 									<td style="padding: 8px 12px;">Ambient-Diffusion</td>
-									<td>6.88</td><td>28.88</td><td>1068.00</td><td>1062.98</td>
+									<td>$6.88$</td><td>$28.88$</td><td>$1068.00$</td><td>$1062.98$</td>
 								</tr>
 								<tr>
 									<td style="padding: 8px 12px;">EM-MMPS</td>
-									<td>8.14</td><td>13.18</td><td>643.59</td><td>640.14</td>
+									<td>$8.14$</td><td>$13.18$</td><td>$643.59$</td><td>$640.14$</td>
 								</tr>
 								<tr>
 									<td style="padding: 8px 12px;">DiffEM (Ours)</td>
-									<td><span class="shine-num">8.57</span></td><td><span class="shine-num">10.24</span></td><td>598.18</td><td>594.75</td>
+									<td><span class="shine-num">$\mathbf{8.57}$</span></td><td><span class="shine-num">$\mathbf{10.24}$</span></td><td>$598.18$</td><td>$594.75$</td>
 								</tr>
 								<tr style="border-bottom: 2px solid;">
 									<td style="padding: 8px 12px;">DiffEM (Warm-started)</td>
-									<td>8.49</td><td>10.33</td><td><span class="shine-num">546.07</span></td><td><span class="shine-num">541.53</span></td>
+									<td>$8.49$</td><td>$10.33$</td><td><span class="shine-num">$\mathbf{546.07}$</span></td><td><span class="shine-num">$\mathbf{541.53}$</span></td>
 								</tr>
 							</tbody>
 						</table>
@@ -304,6 +442,7 @@
 
 					<div class="image-container">
 						<img src="../assets/images/blog_diffem/visual1.png" alt="DiffEM Visualization" style="width: 100%; height: auto;"/>
+						<p class="image-caption">Showing the improvement of samples after each iteration for the conditional diffusion model on CIFAR-10 [<a href="#cifar10">13</a>] with random masking at corruption rate $\rho = 0.75$.</p>
 					</div>
 
 					<div class="image-container">
@@ -351,6 +490,31 @@
 							Weimin Bai, Yifei Wang, Wenzheng Chen, and He Sun (2024).
 							<a href="https://arxiv.org/abs/2407.01014" target="_blank">An Expectation-Maximization Algorithm for Training Clean Diffusion Models from Corrupted Observations</a>.
 							<em>arXiv:2407.01014</em>.
+						</li>
+						<li id="dhariwal2021">
+							Prafulla Dhariwal and Alex Nichol (2021).
+							<a href="https://arxiv.org/abs/2105.05233" target="_blank">Diffusion Models Beat GANs on Image Synthesis</a>.
+							<em>arXiv:2105.05233</em>.
+						</li>
+						<li id="goodfellow2014">
+							Ian J. Goodfellow, Jean Pouget-Abadie, Mehdi Mirza, Bing Xu, David Warde-Farley, Sherjil Ozair, Aaron Courville, and Yoshua Bengio (2014).
+							<a href="https://arxiv.org/abs/1406.2661" target="_blank">Generative Adversarial Networks</a>.
+							<em>arXiv:1406.2661</em>.
+						</li>
+						<li id="sohldickstein2015">
+							Jascha Sohl-Dickstein, Eric A. Weiss, Niru Maheswaranathan, and Surya Ganguli (2015).
+							<a href="https://arxiv.org/abs/1503.03585" target="_blank">Deep Unsupervised Learning using Nonequilibrium Thermodynamics</a>.
+							<em>arXiv:1503.03585</em>.
+						</li>
+						<li id="afhq">
+							Yunjey Choi, Youngjung Uh, Jaejun Yoo, and Jung-Woo Ha (2020).
+							<a href="https://arxiv.org/abs/1912.01865" target="_blank">StarGAN v2: Diverse Image Synthesis for Multiple Domains</a>.
+							<em>Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)</em>.
+						</li>
+						<li id="cifar10">
+							Alex Krizhevsky (2009).
+							<a href="https://www.cs.toronto.edu/~kriz/cifar.html" target="_blank">Learning Multiple Layers of Features from Tiny Images</a>.
+							<em>Technical Report</em>.
 						</li>
 					</ol>
 

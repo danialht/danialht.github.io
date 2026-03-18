@@ -85,7 +85,7 @@ body.dark-theme .blog-item:hover {
 
 .blog-post-body {
 	color: var(--text-primary);
-	line-height: 1.8;
+	line-height: 1.6;
 	font-size: 1.05rem;
 }
 
@@ -104,7 +104,11 @@ body.dark-theme .blog-item:hover {
 }
 
 .blog-post-body p {
-	margin: 0 0 1.25rem 0;
+	margin: 0 0 0.5rem 0;
+}
+
+.blog-post-body .mjx-container {
+	margin: 0.4em 0 !important;
 }
 
 .blog-post-body a {

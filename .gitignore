@@ -15,3 +15,6 @@ build/
 # We are using npm
 yarn.lock
 pnpm-lock.yaml
+
+# python notebooks
+*.ipynb
