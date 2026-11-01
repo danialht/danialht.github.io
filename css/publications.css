@@ -80,7 +80,7 @@
 
 .paper-link {
 	background: var(--primary-color);
-	color: #fff;
+	color: var(--on-primary);
 }
 
 .paper-link:hover {
@@ -93,7 +93,7 @@
 .video-link:hover,
 .poster-link:hover {
 	background: var(--primary-color);
-	color: #fff;
+	color: var(--on-primary);
 }
 
 /* Dark Theme Adjustments are mostly handled by variables */

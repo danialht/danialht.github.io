@@ -1,13 +1,15 @@
 :root {
-	--primary-color: #6366f1; /* Indigo 500 */
-	--primary-dark: #4f46e5; /* Indigo 600 */
-	--primary-light: #818cf8; /* Indigo 400 */
-	--bg-color: #f8fafc; /* Slate 50 */
+	--primary-color: #0015b0;
+	--primary-dark: #000e7a;
+	--primary-light: #4d5fd6;
+	--on-primary: #ffffff; /* Text on primary backgrounds */
+	--link-color: #0015b0;
+	--link-hover: #000e7a;
+	--bg-color: #ffffff;
 	--surface-color: #ffffff;
 	--text-primary: #1e293b; /* Slate 800 */
 	--text-secondary: #475569; /* Slate 600 */
-	--nav-bg: rgba(99, 102, 241, 0.9);
-	--footer-bg: rgba(241, 245, 249, 0.8);
+	--nav-bg: rgba(0, 21, 176, 0.9);
 	--border-color: #e2e8f0; /* Slate 200 */
 	--transition-speed: 0.3s;
 }
@@ -19,15 +21,17 @@ html.theme-transitioning *::after {
 }
 
 html.dark-theme {
-	--primary-color: #818cf8; /* Indigo 400 */
-	--primary-dark: #6366f1; /* Indigo 500 */
-	--primary-light: #a5b4fc; /* Indigo 300 */
+	--primary-color: #6ea0ff;
+	--primary-dark: #4d84ec;
+	--primary-light: #a3c2ff;
+	--on-primary: #0f172a; /* Text on primary backgrounds */
+	--link-color: #6ea0ff;
+	--link-hover: #a3c2ff;
 	--bg-color: rgb(29, 30, 32);
 	--surface-color: rgb(40, 42, 45);
 	--text-primary: #f1f5f9; /* Slate 100 */
 	--text-secondary: #94a3b8; /* Slate 400 */
 	--nav-bg: rgba(29, 30, 32, 0.9);
-	--footer-bg: rgba(29, 30, 32, 0.8);
 	--border-color: rgb(55, 57, 62);
 }
 
@@ -39,6 +43,33 @@ body {
 	background-color: var(--bg-color);
 	transition: background-color var(--transition-speed), color var(--transition-speed);
 	line-height: 1.6;
+}
+
+/* Plain text links; nav links, cards and buttons have their own classes/rules */
+main a:not([class]) {
+	color: var(--link-color);
+	transition: color var(--transition-speed);
+}
+
+main a:not([class]):hover {
+	color: var(--link-hover);
+}
+
+#about a {
+	text-decoration: none;
+}
+
+.social-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 1.5rem;
+	margin-top: 1.5rem;
+}
+
+.social-links a {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
 }
 
 header {
@@ -148,20 +179,6 @@ html.dark-theme .navigation {
 	margin: 0 10px;
 }
 
-.footer {
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	text-align: center;
-	z-index: 1000;
-	background-color: var(--footer-bg);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-	border-top: 1px solid var(--border-color);
-	padding: 10px 0;
-}
-
 .navigation a {
 	color: #fff;
 	text-decoration: none;
@@ -172,15 +189,6 @@ html.dark-theme .navigation {
 
 .navigation a:hover {
 	background-color: rgba(255, 255, 255, 0.1);
-}
-
-footer {
-	text-align: center;
-	padding: 20px 0;
-	background-color: var(--surface-color);
-	margin-top: 20px;
-	transition: background-color var(--transition-speed);
-	color: var(--text-secondary);
 }
 
 
@@ -223,12 +231,6 @@ footer {
 	border-radius: 8px;
 }
 
-canvas {
-	display: block;
-	margin: 0 auto 10px auto; /* top: 0, bottom: 10px, auto left/right centers it */
-	max-width: 100%;
-}
-
 /* Make body take full space */
 body,
 html {
@@ -243,69 +245,6 @@ html {
 	align-items: center;
 	flex-direction: column;
 	height: 100%;
-}
-
-/* Style and center the canvas */
-canvas {
-	max-width: 100%;
-	margin-bottom: 20px;
-}
-
-/* Style and center the range input */
-input[type="range"] {
-	-webkit-appearance: none;
-	appearance: none;
-	width: 300px;
-	height: 8px;
-	border-radius: 5px;
-	background: var(--border-color);
-	outline: none;
-	margin: 0 auto;
-	transition: background var(--transition-speed);
-	display: block;
-}
-
-/* Firefox track */
-input[type="range"]::-moz-range-track {
-	height: 8px;
-	background: #ddd;
-	border-radius: 5px;
-}
-
-/* WebKit thumb */
-input[type="range"]::-webkit-slider-thumb {
-	-webkit-appearance: none;
-	appearance: none;
-	width: 20px;
-	height: 20px;
-	background: #fff;
-	border: 2px solid var(--primary-color);
-	border-radius: 50%;
-	cursor: pointer;
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-	transition: background var(--transition-speed), transform 0.2s;
-}
-
-input[type="range"]::-webkit-slider-thumb:hover {
-	background: var(--primary-color);
-	transform: scale(1.1);
-}
-
-/* Firefox thumb */
-input[type="range"]::-moz-range-thumb {
-	width: 20px;
-	height: 20px;
-	background: white;
-	border: 2px solid var(--primary-color);
-	border-radius: 50%;
-	cursor: pointer;
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-	transition: background var(--transition-speed), transform 0.2s;
-}
-
-input[type="range"]::-moz-range-thumb:hover {
-	background: var(--primary-color);
-	transform: scale(1.1);
 }
 
 .page-header {
@@ -449,7 +388,7 @@ html.dark-theme .hero-header::before {
 	.hamburger {
 		display: block;
 		background-color: var(--primary-color);
-		color: white;
+		color: var(--on-primary);
 		border: none;
 		padding: 15px 20px;
 		font-size: 1.5em;

@@ -107,17 +107,26 @@ body.dark-theme .blog-item:hover {
 	margin: 0 0 0.5rem 0;
 }
 
+.blog-post-body ul,
+.blog-post-body ol {
+	margin: 0.5rem 0 1rem 1.5rem;
+}
+
+.blog-post-body li {
+	margin-bottom: 0.4rem;
+}
+
 .blog-post-body .mjx-container {
 	margin: 0.4em 0 !important;
 }
 
 .blog-post-body a {
-	color: var(--primary-color);
+	color: var(--link-color);
 	text-decoration: underline;
 }
 
 .blog-post-body a:hover {
-	color: var(--primary-dark);
+	color: var(--link-hover);
 }
 
 .back-link {
@@ -220,6 +229,40 @@ body.dark-theme .blog-item:hover {
 	font-style: italic;
 }
 
+.callout {
+	margin: 1.5rem 0;
+	padding: 1rem 1.1rem;
+	border-left: 4px solid var(--primary-color);
+	background: var(--surface-color);
+	border-radius: 0 10px 10px 0;
+	color: var(--text-primary);
+}
+
+.table-wrapper {
+	overflow-x: auto;
+	margin: 1.5rem 0;
+}
+
+.blog-post-body table {
+	width: 100%;
+	border-collapse: collapse;
+	min-width: 620px;
+	font-size: 0.96rem;
+}
+
+.blog-post-body th,
+.blog-post-body td {
+	padding: 0.85rem 0.9rem;
+	border: 1px solid var(--border-color);
+	text-align: left;
+	vertical-align: top;
+}
+
+.blog-post-body th {
+	background: var(--surface-color);
+	font-weight: 600;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
 	.blog-item {
@@ -236,5 +279,9 @@ body.dark-theme .blog-item:hover {
 
 	.blog-post-body {
 		font-size: 1rem;
+	}
+
+	.callout {
+		padding: 0.9rem 1rem;
 	}
 }
