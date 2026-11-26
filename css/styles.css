@@ -59,6 +59,15 @@ main a:not([class]):hover {
 	text-decoration: none;
 }
 
+.announcement {
+	margin: 1.5rem 0 0.5rem;
+	padding: 0.85rem 1.1rem;
+	border-left: 4px solid var(--primary-color);
+	border-radius: 0 8px 8px 0;
+	background: color-mix(in srgb, var(--primary-color) 8%, transparent);
+	color: var(--text-primary);
+}
+
 .social-links {
 	display: flex;
 	flex-wrap: wrap;
